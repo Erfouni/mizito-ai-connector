@@ -60,6 +60,36 @@ Reverse-engineered on 2026-09-27 from the office.mizito.ir web app (AngularJS bu
 
 Names can use Arabic `ي` instead of Persian `ی` (e.g. the bot «دستيار ميزيتو»); normalise before matching.
 
+## Verified calendar, project, letter, chat and note calls (2026-09-28)
+
+| Endpoint | Request | Notes |
+|---|---|---|
+| `tasks.upcoming` (calendar) | `{inbox:true, all:true, from:null, filter:{calendar_year, calendar_month, visibility_type:"alarm_at"\|"deadline"}}` (Jalali year/month); `filter:{calendar_repeated_and_without_time:true}` for tasks without a time | the calendar places tasks by `alarm_at`; `deadline` visibility only shows tasks with `has_deadline` (advanced projects) |
+| `tasks.snooze` | `{token, project, alarm_at(ISO or null), update_repeat_base:false}` | sets the reminder (= calendar time); ignored for completed tasks |
+| `tasks.toggleBookmark` | `{token, bookmarked}` | |
+| `tasks.history` / `projects.history` | `{token, tid}` / `{project_id}` | `[{date, user, changes, …}]` |
+| `labels.getAll` / `labels.add` | `{type}` / `{title, color, type}` | types: task, inbox, note, project, customer, deal; colors like `grey`, `green`, `light-blue` |
+| `projects.save` | `{project_id, title, color, members:[ids]}` | full values, not a diff |
+| `projects.addKanbanBoard` | `{projectId, kanbanBoard:[{title, color}]}` | |
+| `inbox.getInbox` (archive) | `{mode:"archived", offset}` | |
+| `inbox.archive` / `inbox.unArchive` / `inbox.seen` | `{thread}` | |
+| `inbox.toggleBookmark` / `inbox.changeMessageLabels` | `{thread, bookmarked}` / `{thread, labels}` | |
+| `chat.updateSentMessage` | `{dialog, mid, newMessage(html)}` | only while the other side has not seen it: each member's `seen_count` in `chat.getChatView.seen` must be below the message's `msg_index`, otherwise HTTP 400 |
+| `chat.addPinMessage` / `chat.toggleBookmark` | `{dialog, message}` / `{dialog, mid, bookmarked}` | |
+| `chat.createDialog` (group) | `{title, is_public:false, is_project_group:false, members:[ids]}` | needs `access_chat_group_creator` |
+| `chat.updateTitle` / `chat.pinDialog` / `chat.unpinDialog` | `{dialog, title}` / `{dialog}` | |
+| `notes.update` | the whole note `{_id, title, note, photo, color, checklist, labels}` | |
+| `notes.archiveNote` / `notes.updatePinState` / `notes.setChecklistValue` | `{note_id, archived}` / `{pinned, noteId}` / `{note_id, check_index, checked}` | |
+
+Read from the client but not exercised: `tasks.removeTask` / `tasks.removeTaskUndo {token}`, `chat.removeSentMessage {dialog, mid}`,
+`chat.inviteUser {dialog, user}`, `notes.deleteNote {note_id, deleted}`, `customer.add` (the web form object: `name, phone:[{label:"اصلی", phone_number}],
+mobile:[{phone_number}], address, notes, members, website, email, postal_code, fax, national_code, economic_code, representatives, photo`).
+
+Refused on the test workspace (no admin rights or not in the plan): `projects.archive` / `projects.undoArchive` (405; the web
+client's "archive" is really delete-with-undo; the other path is `chat.archiveProject {dialog, project, withArchiveTasks}` for
+projects that have a chat group), `customer.add` (400 even with the exact web-form payload), `deal.*` (400; the deal list takes
+`{filter:{labels, labels_not, tracking_user, from_date, to_date}, probability}`), `monitor.*` / `projects.monitor.*` (400).
+
 ## Parameters read from the client code (not yet exercised)
 
 - `tasks.history {token, tid}`, `chat.getMessages {mids, dialog}`, `chat.getMessageByDate {dialog, date}`
@@ -67,7 +97,9 @@ Names can use Arabic `ي` instead of Persian `ی` (e.g. the bot «دستيار �
 - `inbox.expandInboxRow {thread, mode}`, `notes.update` (a note object with `_id`)
 - `monitor.user {uid}`, `monitor.workspace {}` (HTTP 400 with `{}`), `session.userInfo {uid}`
 
-## All 336 endpoints found in the client
+## All 351 endpoints found in the client
+
+Besides the list below, 15 names are built with ternaries in the client: `chat.removeSentMessage`, `chat.removeSentMessageAdmin`, `formRequestTemplate.getTaskWorkflow`, `formRequestTemplate.newComment`, `inbox.registerInLetter`, `inbox.registerOutLetter`, `monitor.project`, `monitor.projectsSummary`, `projectAutomation.add`, `projectAutomation.update`, `projectAutomationWorkflow.getTaskWorkflow`, `projects.monitor.chart.getPast30DoneTasksPercents`, `projects.monitor.project`, `projects.monitor.projectsSummary`, `tasks.newComment`.
 
 **attendance**: delete, start, stop
 **chat**: addPinMessage, archiveProject, convertDialogToNotPublic, convertMentionToUnProcessed, createDialog, deleteDialog, deleteUser, fixDialogs, getChatView, getDialogUnDoneTasksCount, getDialogs, getFullChat, getHistory, getMessageByDate, getMessageIndex, getMessages, getStatusDetails, inviteUser, loadSettings, pinDialog, removeMentionMessage, removePhoto, removePinMessage, removeTaskSnoozeMessage, saveSettings, search, seen, send, setAdmin, setTyping, toggleBookmark, unpinDialog, updatePhoto, updateSentMessage, updateTitle

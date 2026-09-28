@@ -11,6 +11,7 @@ import os
 import random
 import re
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
@@ -132,19 +133,26 @@ def mizito_list_users() -> dict:
 
 
 @mcp.tool(annotations=READ)
-def mizito_list_conversations(unread_only: bool = False, limit: int = 100) -> dict:
-    """Chat conversations (private, group, customer), newest activity first, with unread and message counts."""
+def mizito_list_conversations(
+    unread_only: bool = False,
+    kind: Literal["all", "private", "group", "customer"] = "all",
+    limit: int = 100,
+) -> dict:
+    """Chat conversations, newest activity first, with unread and message counts. kind filters to
+    private chats, groups, or customers (CRM customers are conversations of type "customer")."""
     data = client.call("chat.getDialogs", {}) or {}
     pinned = {p if isinstance(p, str) else p.get("_id") for p in data.get("pin_dialogs") or []}
     out = []
     for d in data.get("dialogs", []):
         if unread_only and not d.get("unread_count"):
             continue
-        kind = "group" if d.get("is_group") else "customer" if d.get("is_customer_entity") else "private"
+        d_kind = "group" if d.get("is_group") else "customer" if d.get("is_customer_entity") else "private"
+        if kind != "all" and d_kind != kind:
+            continue
         out.append(compact({
             "id": d["_id"],
             "title": client.dialog_title(d),
-            "type": kind,
+            "type": d_kind,
             "unread": d.get("unread_count", 0),
             "messages_count": d.get("messages_count"),
             "last_message_date": d.get("last_message_date"),
@@ -186,9 +194,10 @@ def mizito_get_messages(conversation_id: str, count: int = 50, offset: int = 0) 
 
 
 @mcp.tool(annotations=READ)
-def mizito_search_messages(query: str, offset: int = 0) -> dict:
-    """Full-text search across all chat messages of the workspace. Page with offset (+ number of results)."""
-    results = client.call("chat.search", {"mode": "chat", "search_str": query, "offset": offset}) or []
+def mizito_search_messages(query: str, scope: Literal["chat", "customers"] = "chat", offset: int = 0) -> dict:
+    """Full-text search across all chat messages (scope="chat") or customer conversations
+    (scope="customers") of the workspace. Page with offset (+ number of results)."""
+    results = client.call("chat.search", {"mode": scope, "search_str": query, "offset": offset}) or []
     out = []
     for m in results:
         item = _simplify_message(m)
@@ -265,8 +274,9 @@ def mizito_get_task_comments(task_id: str) -> dict:
 
 
 @mcp.tool(annotations=READ)
-def mizito_list_letters(box: Literal["inbox", "outbox"] = "inbox", offset: int = 0) -> dict:
-    """Letters (کارتابل/نامه‌ها): inbox or outbox, newest first. Use `thread` with mizito_get_letter_thread."""
+def mizito_list_letters(box: Literal["inbox", "outbox", "archived"] = "inbox", offset: int = 0) -> dict:
+    """Letters (کارتابل/نامه‌ها): inbox, outbox or archived inbox, newest first.
+    Use `thread` with mizito_get_letter_thread / mizito_reply_letter / mizito_manage_letter."""
     payload = {"mode": box, "offset": offset}
     if box == "outbox":
         payload["outbox_mode"] = "all"
@@ -325,6 +335,88 @@ def mizito_list_notes() -> dict:
     return {"notes": compact(client.call("notes.getAll", {}) or [])}
 
 
+TEHRAN = timezone(timedelta(hours=3, minutes=30))  # Iran has had no DST since 2022
+
+
+def _gregorian_to_jalali(gy: int, gm: int, gd: int) -> tuple[int, int, int]:
+    """Standard arithmetic Gregorian -> Jalali (Persian) conversion."""
+    g_d_m = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
+    gy2 = gy + 1 if gm > 2 else gy
+    days = 355666 + 365 * gy + (gy2 + 3) // 4 - (gy2 + 99) // 100 + (gy2 + 399) // 400 + gd + g_d_m[gm - 1]
+    jy = -1595 + 33 * (days // 12053)
+    days %= 12053
+    jy += 4 * (days // 1461)
+    days %= 1461
+    if days > 365:
+        jy += (days - 1) // 365
+        days = (days - 1) % 365
+    if days < 186:
+        return jy, 1 + days // 31, 1 + days % 31
+    return jy, 7 + (days - 186) // 30, 1 + (days - 186) % 30
+
+
+def _calendar_row(task: dict) -> dict:
+    return compact({
+        "id": task.get("_id"),
+        "title": task.get("title"),
+        "reminder": task.get("alarm_at"),
+        "deadline": task.get("deadline"),
+        "project": task.get("project"),
+        "completed": task.get("completed"),
+        "repeat": task.get("alarm_options"),
+    })
+
+
+@mcp.tool(annotations=READ)
+def mizito_calendar(
+    year: int | None = None,
+    month: int | None = None,
+    by: Literal["reminder", "deadline"] = "reminder",
+) -> dict:
+    """My tasks on the Mizito calendar (تقویم) for one Jalali month. The calendar places tasks by
+    their reminder time (by="reminder", the default); by="deadline" only shows tasks with a deadline
+    in advanced projects. year/month are Jalali (e.g. 1405, 7 = Mehr) and default to the current
+    month in Tehran. Tasks without a reminder time are returned separately."""
+    if not year or not month:
+        now = datetime.now(TEHRAN)
+        year, month, _ = _gregorian_to_jalali(now.year, now.month, now.day)
+    if not 1 <= month <= 12:
+        raise ToolError("month must be 1-12 (Jalali: 1 = Farvardin ... 7 = Mehr ... 12 = Esfand)")
+    base = {"inbox": True, "all": True, "from": None}
+    visibility = "alarm_at" if by == "reminder" else "deadline"
+    scheduled = client.call("tasks.upcoming", {**base, "filter": {
+        "calendar_year": year, "calendar_month": month, "visibility_type": visibility}}) or []
+    unscheduled = client.call("tasks.upcoming", {**base, "filter": {"calendar_repeated_and_without_time": True}}) or []
+    _remember_tasks(scheduled)
+    _remember_tasks(unscheduled)
+    return {
+        "year": year, "month": month, "by": by, "count": len(scheduled),
+        "tasks": [_calendar_row(t) for t in scheduled],
+        "repeating_or_without_time": [_calendar_row(t) for t in unscheduled],
+    }
+
+
+@mcp.tool(annotations=READ)
+def mizito_list_labels(kind: Literal["task", "inbox", "note", "project", "customer", "deal"] = "task") -> dict:
+    """Labels (برچسب‌ها) of one kind with their ids, for assigning to tasks, letters, notes, etc."""
+    data = client.call("labels.getAll", {"type": kind}) or {}
+    return {"kind": kind, "labels": compact(data.get("labels") or [])}
+
+
+@mcp.tool(annotations=READ)
+def mizito_get_history(kind: Literal["task", "project"], item_id: str) -> dict:
+    """Change history of a task or project: who changed what, and when."""
+    if kind == "task":
+        task = _load_task(item_id)
+        rows = client.call("tasks.history", {"token": task["access_token"], "tid": task["_id"]}) or []
+    else:
+        rows = client.call("projects.history", {"project_id": item_id}) or []
+    for row in rows:
+        if isinstance(row, dict) and isinstance(row.get("user"), str):
+            row["user_name"] = client.user_name(row["user"])
+    return {"kind": kind, "id": item_id, "count": len(rows), "history": compact(rows)}
+
+
 # --- escape hatch ---------------------------------------------------------------------------
 
 _READ_METHOD = re.compile(
@@ -368,6 +460,7 @@ def _task_ref(task: dict) -> dict:
         "completed": task.get("completed"),
         "progress": task.get("progress"),
         "deadline": task.get("deadline"),
+        "reminder": task.get("alarm_at"),
     })
 
 
@@ -476,11 +569,13 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
         notes: str = "",
         deadline: str | None = None,
         checklist: list[str] | None = None,
+        remind_at: str | None = None,
     ) -> dict:
         """Create a task inside a project (Mizito requires one; ids from mizito_list_projects).
-        assignee_ids from mizito_list_users (mizito_whoami's user_id for yourself); deadline is ISO 8601
-        (e.g. "2026-10-01T14:30:00+03:30"); checklist is a list of item titles.
-        Only on the user's explicit request."""
+        assignee_ids from mizito_list_users (mizito_whoami's user_id for yourself); checklist is a list
+        of item titles. remind_at is the task's scheduled time (زمان یادآوری): it is what places the task
+        on the Mizito calendar and triggers the reminder. deadline (مهلت) alone does NOT show on the
+        calendar. Both are ISO 8601, e.g. "2026-10-01T14:30:00+03:30". Only on the user's explicit request."""
         # Same defaults as the web client's new-task form; it sends no deadline key when there is none.
         payload = {
             "title": title, "notes": notes, "assignee": assignee_ids, "project": project_id,
@@ -498,7 +593,15 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
             raise ToolError(f"Mizito refused the task: {result['error']}")
         tasks = [t for t in (result if isinstance(result, list) else [result]) if isinstance(t, dict)]
         _remember_tasks(tasks)
-        return {"created": len(tasks), "tasks": [_task_ref(t) for t in tasks]}
+        if remind_at:
+            for t in tasks:
+                client.call("tasks.snooze", {"token": t["access_token"], "project": t.get("project"),
+                                             "alarm_at": remind_at, "update_repeat_base": False})
+            tasks = [_load_task(t["_id"]) for t in tasks]
+        out = {"created": len(tasks), "tasks": [_task_ref(t) for t in tasks]}
+        if deadline and not remind_at:
+            out["note"] = "No remind_at: the task is listed under 'without time' on the calendar."
+        return out
 
     @mcp.tool(annotations=WRITE_UPDATE)
     def mizito_update_task(
@@ -506,8 +609,10 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
         title: str | None = None,
         notes: str | None = None,
         assignee_ids: list[str] | None = None,
+        label_ids: list[str] | None = None,
     ) -> dict:
-        """Edit a task's title, description and/or assignees; omitted fields stay unchanged."""
+        """Edit a task's title, description, assignees and/or labels (ids from mizito_list_labels);
+        omitted fields stay unchanged."""
         changes = {}
         if title is not None:
             changes["title"] = title
@@ -515,8 +620,10 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
             changes["notes"] = notes  # task descriptions are plain text in Mizito
         if assignee_ids is not None:
             changes["assignee"] = assignee_ids
+        if label_ids is not None:
+            changes["labels"] = label_ids
         if not changes:
-            raise ToolError("Nothing to change: pass title, notes or assignee_ids")
+            raise ToolError("Nothing to change: pass title, notes, assignee_ids or label_ids")
         _save_task(_load_task(task_id), **changes)
         return {"updated": True, "task": _task_ref(_load_task(task_id))}
 
@@ -538,7 +645,8 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
 
     @mcp.tool(annotations=WRITE)
     def mizito_set_task_deadline(task_id: str, deadline: str | None) -> dict:
-        """Set a task's deadline (ISO 8601, e.g. "2026-10-01T14:30:00+03:30") or clear it with null."""
+        """Set a task's deadline (مهلت, ISO 8601, e.g. "2026-10-01T14:30:00+03:30") or clear it with null.
+        To put a task on the calendar use mizito_set_task_reminder instead."""
         task = _load_task(task_id)
         client.call("tasks.updateDeadline", {"token": task["access_token"], "project": task.get("project"), "deadline": deadline})
         return {"task": _task_ref(_load_task(task_id))}
@@ -604,6 +712,239 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
         matches = [p for p in (client.call("projects.getList", {}) or {}).get("projects", []) if p.get("title") == title]
         newest = max(matches, key=lambda p: p.get("_id", ""), default={})
         return {"created": True, "project": compact(newest)}
+
+
+    # --- calendar, bookmarks and trash for tasks ---
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_set_task_reminder(task_id: str, remind_at: str | None) -> dict:
+        """Put a task on the calendar at a reminder time (ISO 8601, e.g. "2026-10-01T09:00:00+03:30"),
+        or remove the reminder with null. For due dates use mizito_set_task_deadline."""
+        task = _load_task(task_id)
+        client.call("tasks.snooze", {"token": task["access_token"], "project": task.get("project"),
+                                     "alarm_at": remind_at, "update_repeat_base": False})
+        after = _load_task(task_id)
+        if remind_at and not after.get("alarm_at"):
+            raise ToolError("Mizito did not set the reminder" + (
+                ": the task is completed, reopen it first" if after.get("completed") else ""))
+        return {"task": _task_ref(after)}
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_manage_task(task_id: str, action: Literal["bookmark", "unbookmark", "delete", "restore"]) -> dict:
+        """bookmark/unbookmark a task (نشان‌شده‌ها), delete it, or restore a task deleted earlier."""
+        token = _task_tokens.get(task_id) if action == "restore" else None
+        token = token or _load_task(task_id)["access_token"]
+        if action in ("bookmark", "unbookmark"):
+            client.call("tasks.toggleBookmark", {"token": token, "bookmarked": action == "bookmark"})
+        elif action == "delete":
+            client.call("tasks.removeTask", {"token": token})
+        else:
+            client.call("tasks.removeTaskUndo", {"token": token})
+        return {"task_id": task_id, "action": action, "done": True}
+
+    # --- projects ---
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_update_project(
+        project_id: str,
+        title: str | None = None,
+        color: str | None = None,
+        member_ids: list[str] | None = None,
+    ) -> dict:
+        """Rename a project, change its color, or replace its member list (ids from mizito_list_users;
+        include everyone who should stay). Omitted fields stay unchanged."""
+        full = client.call("projects.full", {"project_id": project_id}) or {}
+        if not full.get("_id"):
+            raise ToolError(f"Project {project_id!r} not found")
+        payload = {
+            "project_id": project_id,
+            "title": title if title is not None else full.get("title"),
+            "color": color or full.get("color") or "grey",
+            "members": member_ids if member_ids is not None else list(full.get("members") or []),
+        }
+        if client.call("projects.save", payload) is False:
+            raise ToolError("Mizito rejected the change (only project admins can edit a project)")
+        after = client.call("projects.full", {"project_id": project_id}) or {}
+        return {"project": compact({k: after.get(k) for k in ("_id", "title", "color", "members", "archived")})}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_add_project_board(project_id: str, title: str, color: str = "grey") -> dict:
+        """Add a kanban board (ستون/دسته‌بندی کارها) to a project. Tasks are grouped by these boards."""
+        result = client.call("projects.addKanbanBoard", {"projectId": project_id,
+                                                          "kanbanBoard": [{"title": title, "color": color}]})
+        if result is False:
+            raise ToolError("Mizito rejected the board (project admin rights needed?)")
+        full = client.call("projects.full", {"project_id": project_id}) or {}
+        return {"project": compact({"_id": full.get("_id"), "title": full.get("title"),
+                                    "boards": [{"id": b.get("_id"), "title": b.get("title")}
+                                               for b in full.get("kanban_boards") or []]})}
+
+    # --- letters ---
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_manage_letter(
+        thread_id: str,
+        action: Literal["archive", "unarchive", "bookmark", "unbookmark", "mark_read", "set_labels"],
+        label_ids: list[str] | None = None,
+    ) -> dict:
+        """Archive/unarchive a letter thread, bookmark it, mark it read, or set its labels
+        (ids from mizito_list_labels(kind="inbox"))."""
+        if action == "archive":
+            client.call("inbox.archive", {"thread": thread_id})
+        elif action == "unarchive":
+            client.call("inbox.unArchive", {"thread": thread_id})
+        elif action in ("bookmark", "unbookmark"):
+            client.call("inbox.toggleBookmark", {"thread": thread_id, "bookmarked": action == "bookmark"})
+        elif action == "mark_read":
+            client.call("inbox.seen", {"thread": thread_id})
+        else:
+            client.call("inbox.changeMessageLabels", {"thread": thread_id, "labels": label_ids or []})
+        return {"thread_id": thread_id, "action": action, "done": True}
+
+    # --- chat messages, conversations and groups ---
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_manage_message(
+        conversation_id: str,
+        message_id: str,
+        action: Literal["edit", "delete", "pin", "bookmark", "unbookmark"],
+        text: str | None = None,
+    ) -> dict:
+        """Edit (new text) or delete one of your own sent messages, pin a message in the conversation,
+        or bookmark/unbookmark it. Message ids come from mizito_get_messages. Mizito only allows editing
+        a message the other side has not seen yet."""
+        if action == "edit":
+            if not text:
+                raise ToolError("text is required for edit")
+            # Seen state lives on the conversation: each member's seen_count is how many messages they read.
+            found = client.call("chat.getMessages", {"mids": [message_id], "dialog": conversation_id}) or []
+            index = (found[0] if isinstance(found, list) and found else {}).get("msg_index") or 0
+            view = client.call("chat.getChatView", {"dialog": conversation_id}) or {}
+            me = client.my_user_id()
+            if any(isinstance(r, dict) and r.get("user") != me and (r.get("seen_count") or 0) >= index
+                   for r in view.get("seen") or []):
+                raise ToolError("Mizito only lets you edit a message the other side has not seen yet")
+            client.call("chat.updateSentMessage", {"dialog": conversation_id, "mid": message_id, "newMessage": _html(text)})
+        elif action == "delete":
+            client.call("chat.removeSentMessage", {"dialog": conversation_id, "mid": message_id})
+        elif action == "pin":
+            client.call("chat.addPinMessage", {"dialog": conversation_id, "message": message_id})
+        else:
+            client.call("chat.toggleBookmark", {"dialog": conversation_id, "mid": message_id,
+                                                "bookmarked": action == "bookmark"})
+        return {"conversation_id": conversation_id, "message_id": message_id, "action": action, "done": True}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_manage_conversation(
+        conversation_id: str,
+        action: Literal["pin", "unpin", "rename", "add_member"],
+        title: str | None = None,
+        user_id: str | None = None,
+    ) -> dict:
+        """Pin/unpin a conversation in the list, rename a group (title), or add a member to a group (user_id)."""
+        if action in ("pin", "unpin"):
+            client.call("chat.pinDialog" if action == "pin" else "chat.unpinDialog", {"dialog": conversation_id})
+        elif action == "rename":
+            if not title:
+                raise ToolError("title is required for rename")
+            client.call("chat.updateTitle", {"dialog": conversation_id, "title": title})
+        else:
+            if not user_id:
+                raise ToolError("user_id is required for add_member")
+            client.call("chat.inviteUser", {"dialog": conversation_id, "user": user_id})
+        return {"conversation_id": conversation_id, "action": action, "done": True}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_create_group(title: str, member_ids: list[str], is_public: bool = False) -> dict:
+        """Create a group conversation (گروه گفتگو) with the given members (ids from mizito_list_users)."""
+        payload = {"title": title, "is_public": is_public, "is_project_group": False, "members": member_ids}
+        dialog = client.call("chat.createDialog", payload) or {}
+        if not isinstance(dialog, dict) or not dialog.get("_id"):
+            raise ToolError("Mizito did not create the group (no permission to create groups?)")
+        return {"conversation_id": dialog["_id"], "title": dialog.get("title") or title}
+
+    # --- notes and labels ---
+
+    def _find_note(note_id: str) -> dict:
+        for archived in (False, True):
+            query = {"archived": True} if archived else {}
+            for note in client.call("notes.getAll", query) or []:
+                if note.get("_id") == note_id:
+                    return note
+        raise ToolError(f"Note {note_id!r} not found")
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_update_note(note_id: str, title: str | None = None, text: str | None = None, color: str | None = None) -> dict:
+        """Edit a note's title, text or color (white, red, orange, yellow, grey, blue, cyan, green)."""
+        if color is not None and color not in NOTE_COLORS:
+            raise ToolError(f"color must be one of {', '.join(NOTE_COLORS)}")
+        note = _find_note(note_id)
+        payload = {k: note.get(k) for k in ("_id", "title", "note", "photo", "color", "checklist", "labels") if k in note}
+        payload.update({k: v for k, v in (("title", title), ("note", text), ("color", color)) if v is not None})
+        return {"note": compact(client.call("notes.update", payload))}
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_manage_note(
+        note_id: str,
+        action: Literal["archive", "unarchive", "pin", "unpin", "delete", "restore", "check_item", "uncheck_item"],
+        item_index: int | None = None,
+    ) -> dict:
+        """Archive/unarchive, pin/unpin, delete (to trash) or restore a note, or tick/untick its
+        checklist item at item_index (0-based)."""
+        if action in ("archive", "unarchive"):
+            client.call("notes.archiveNote", {"note_id": note_id, "archived": action == "archive"})
+        elif action in ("pin", "unpin"):
+            client.call("notes.updatePinState", {"pinned": action == "pin", "noteId": note_id})
+        elif action in ("delete", "restore"):
+            client.call("notes.deleteNote", {"note_id": note_id, "deleted": action == "delete"})
+        else:
+            if item_index is None:
+                raise ToolError("item_index is required for check_item/uncheck_item")
+            client.call("notes.setChecklistValue", {"note_id": note_id, "check_index": item_index,
+                                                    "checked": action == "check_item"})
+        return {"note_id": note_id, "action": action, "done": True}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_create_label(title: str, kind: Literal["task", "inbox", "note", "customer"] = "task", color: str = "grey") -> dict:
+        """Create a label (برچسب) for tasks, letters, notes or customers."""
+        result = client.call("labels.add", {"title": title, "color": color, "type": kind})
+        if result is False:
+            raise ToolError("Mizito rejected the label (only workspace admins can add some label kinds)")
+        labels = (client.call("labels.getAll", {"type": kind}) or {}).get("labels") or []
+        created = next((l for l in labels if l.get("title") == title), None)
+        return {"created": True, "label": compact(created or result)}
+
+    # --- CRM customers (opt-in: MIZITO_ENABLE_CRM=1; needs a plan with CRM, untested) ---
+    if os.getenv("MIZITO_ENABLE_CRM") == "1":
+
+
+        @mcp.tool(annotations=WRITE)
+        def mizito_create_customer(
+            name: str,
+            mobile: str | None = None,
+            email: str = "",
+            address: str = "",
+            notes: str = "",
+            member_ids: list[str] | None = None,
+        ) -> dict:
+            """Create a CRM customer (مشتری). It gets its own customer conversation; member_ids are the
+            colleagues who can see it (defaults to you)."""
+            payload = {
+                "name": name, "phone": [], "mobile": [{"phone_number": mobile}] if mobile else [],
+                "address": address, "notes": notes, "members": member_ids or [client.my_user_id()],
+                "website": "", "email": email, "postal_code": "", "fax": "", "national_code": "",
+                "economic_code": "", "representatives": [], "photo": None,
+            }
+            try:
+                result = client.call("customer.add", payload) or {}
+            except MizitoError as exc:
+                raise ToolError(f"Mizito refused the customer (is CRM part of this workspace's plan?): {exc}") from exc
+            if isinstance(result, dict) and result.get("customers_exceeded"):
+                raise ToolError("The workspace plan's customer limit is reached")
+            if not isinstance(result, dict):
+                raise ToolError(f"Mizito did not create the customer: {result!r}")
+            return {"created": True, "customer": compact(result.get("apiCustomer") or result),
+                    "conversation_id": (result.get("apiDialog") or {}).get("_id")}
 
 
 def _transport_security() -> TransportSecuritySettings | None:

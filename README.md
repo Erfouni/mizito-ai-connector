@@ -142,11 +142,13 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 | `mizito_whoami` / `mizito_switch_workspace` | کاربر فعلی و میزکارها، و جابه‌جایی بین میزکارها |
 | `mizito_dashboard` | شمارنده‌ها: نامه‌ها و پیام‌های خوانده‌نشده، کارهای امروز و عقب‌افتاده |
 | `mizito_list_users` | اعضای میزکار |
-| `mizito_list_conversations` / `mizito_get_messages` / `mizito_search_messages` | گفتگوها، پیام‌ها (تا ۶۰۰ پیام در هر فراخوانی) و جستجو |
+| `mizito_list_conversations` / `mizito_get_messages` / `mizito_search_messages` | گفتگوها (همه، خصوصی، گروه، مشتری)، پیام‌ها (تا ۶۰۰ پیام در هر فراخوانی)، و جستجو در گفتگوها یا مشتری‌ها |
 | `mizito_list_projects` / `mizito_get_project` | پروژه‌ها |
 | `mizito_list_tasks` / `mizito_get_task` / `mizito_get_task_comments` | وظایف: کارهای من، پیگیری از دیگران، وظایف یک پروژه، انجام‌شده‌ها |
-| `mizito_list_letters` / `mizito_get_letter_thread` | کارتابل نامه‌ها |
-| `mizito_list_notes` | یادداشت‌ها |
+| `mizito_calendar` | **تقویم** یک ماه شمسی: وظایف بر اساس زمان یادآوری، به‌علاوه‌ی وظایف بدون زمان |
+| `mizito_list_letters` / `mizito_get_letter_thread` | کارتابل نامه‌ها: ورودی، خروجی، بایگانی |
+| `mizito_list_notes` / `mizito_list_labels` | یادداشت‌ها و برچسب‌ها |
+| `mizito_get_history` | تاریخچه‌ی تغییرات یک وظیفه یا پروژه |
 | `mizito_api_read` | فراخوانی هر endpoint فقط‌خواندنی دیگر |
 
 خواندن پیام‌ها آن‌ها را «دیده‌شده» علامت نمی‌زند.
@@ -155,14 +157,30 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 
 | ابزار | کار |
 |---|---|
-| `mizito_send_message` / `mizito_start_conversation` / `mizito_mark_conversation_read` | ارسال پیام (با امکان پاسخ به یک پیام)، شروع گفتگوی خصوصی، علامت خوانده‌شده |
-| `mizito_create_task` / `mizito_update_task` / `mizito_comment_on_task` | ساخت وظیفه **داخل یک پروژه** (در میزیتو اجباری است)، ویرایش، کامنت |
+| `mizito_send_message` / `mizito_manage_message` | ارسال پیام (با امکان پاسخ به یک پیام)؛ ویرایش یا حذف پیام خودتان، سنجاق، نشان کردن |
+| `mizito_start_conversation` / `mizito_create_group` / `mizito_manage_conversation` / `mizito_mark_conversation_read` | گفتگوی خصوصی، ساخت گروه، تغییر اسم گروه، افزودن عضو، سنجاق کردن گفتگو، خوانده‌شده |
+| `mizito_create_task` / `mizito_update_task` / `mizito_comment_on_task` / `mizito_manage_task` | ساخت وظیفه **داخل یک پروژه** (در میزیتو اجباری است)، ویرایش (عنوان، توضیحات، مسئولان، برچسب‌ها)، کامنت، نشان کردن، حذف و برگرداندن |
+| `mizito_set_task_reminder` | **ثبت در تقویم**: زمان یادآوری، که همان زمانی است که وظیفه با آن روی تقویم می‌نشیند |
 | `mizito_set_task_completed` / `mizito_set_task_deadline` / `mizito_set_task_progress` / `mizito_check_task_item` | تکمیل یا بازکردن دوباره، مهلت، درصد پیشرفت، تیک چک‌لیست |
-| `mizito_send_letter` / `mizito_reply_letter` | ارسال نامه و پاسخ داخل یک رشته |
-| `mizito_create_note` / `mizito_create_project` | ساخت یادداشت و پروژه |
+| `mizito_create_project` / `mizito_update_project` / `mizito_add_project_board` | ساخت پروژه؛ تغییر اسم، رنگ و اعضا؛ افزودن ستون کانبان |
+| `mizito_send_letter` / `mizito_reply_letter` / `mizito_manage_letter` | ارسال نامه و پاسخ؛ بایگانی، نشان کردن، خوانده‌شده، برچسب |
+| `mizito_create_note` / `mizito_update_note` / `mizito_manage_note` | یادداشت: ساخت، ویرایش، سنجاق، بایگانی، حذف و برگرداندن، تیک چک‌لیست |
+| `mizito_create_label` | ساخت برچسب برای وظیفه، نامه، یادداشت یا مشتری |
+| `mizito_create_customer` | ساخت مشتری CRM. فقط با `MIZITO_ENABLE_CRM=1` فعال می‌شود و پلن دارای CRM لازم دارد (تست نشده) |
 
-این ابزارها روی یک حساب واقعی تست شده‌اند. فقط ساختن گفتگوی خصوصیِ **تازه** و تغییر مسئولان وظیفه هنوز تست نشده‌اند.
-حذف کردن هر چیزی و مدیریت میزکار و حساب (عضوها، نقش‌ها، رمز، پرداخت) عمداً پشتیبانی نمی‌شوند.
+**نکته‌های رفتاری میزیتو** (روی حساب واقعی پیدا شده‌اند):
+- تقویم وظیفه را بر اساس **زمان یادآوری** نشان می‌دهد. وظیفه‌ای که فقط مهلت دارد در فهرست «بدون زمان» می‌ماند.
+- روی وظیفه‌ی تکمیل‌شده نمی‌شود یادآوری گذاشت. اول باید دوباره بازش کرد.
+- فقط پیامی را می‌شود ویرایش کرد که طرف مقابل هنوز ندیده باشد.
+
+**وضعیت تست:**
+- همه‌ی ابزارها روی یک حساب واقعی تست شده‌اند، به‌جز این موارد:
+  - ویرایش پیامِ دیده‌نشده
+  - حذف (پیام، وظیفه، یادداشت)
+  - افزودن عضو به گروه
+  - ساختن گفتگوی خصوصیِ تازه
+  - ساخت مشتری
+- **عمداً پشتیبانی نمی‌شوند:** بایگانی یا حذف پروژه (فقط مدیر میزکار)، معاملات و گزارش‌های آماری (پلن یا دسترسی مدیر لازم دارند)، تماس تصویری، حضور و غیاب، اتوماسیون، پرداخت، و مدیریت حساب و میزکار.
 
 ## امنیت
 
