@@ -1,0 +1,66 @@
+# لحظه‌ای، انواع داده، پلن‌ها و تنظیمات میزیتو
+
+## کانال لحظه‌ای (socket.io)
+
+- اتصال: `io(Config.App.io_url, {query: "tab_id=<id>", transports: ["websocket"], path: "/" + io_url_path})`.
+- بعد از `connect`، کلاینت `emit("authenticate", {token})` می‌فرستد. خطای `Unauthorized` یعنی توکن نامعتبر است.
+- همه‌ی به‌روزرسانی‌ها با رویداد `m` می‌آیند: `{type, body, workspace_id}`. کلاینت `type` را در میزکار فعلی پخش می‌کند و برای میزکارهای دیگر با پیشوند `out_workspace_`.
+- رویدادهای کنترلی: `connect_error`، `disconnect`، `terminated`، `reconnect_socket`. نوع‌های خاص روی `m`: `invite_to_workspace` و `dashboard_seen`.
+
+### نوع‌های پیام سرور که برای میزکارهای دیگر هم گوش داده می‌شوند (22)
+
+`chat_message` `chat_message_seen` `config_changed` `dashboard_message_changed` `inbox-message` `meeting-request-join` `new_user_accepted_invite` `online-support-message-deleted` `online-support-message-edited` `online-support-message-seen` `online-support-request-message` `online-support-response-closed` `online-support-response-message` `plan_updated` `reload_client` `set_do_not_disturb_until` `tasks_new_task` `terminate_session` `user_option_hide_dashboard_workspaces` `user_status` `wallpaper_changed` `workspace_name_updated`
+
+### همه‌ی رویدادهایی که کلاینت گوش می‌دهد ولی خودش پخش نمی‌کند (120)
+
+این‌ها یا از سرور می‌آیند یا از کتابخانه‌های رابط (drag، gantt، تقویم):
+
+`boards.cloned` `boards.drop` `calendar-tasks.drop` `chat-typing` `chat_dialog_settings_updated` `chat_full_force_update` `chat_group_photo_update` `chat_group_pin_updated` `chat_group_title_update` `chat_inbox_messages_update` `chat_kicked` `chat_message` `chat_message_seen` `chat_minute_sign_message_processed` `chat_schedule_message_processed` `contact_usage_update` `copy-project-update-step-progress` `copy-project-update-task-progress` `customer_full_update` `dashboard_message_changed` `deal_added` `deal_updated` `destroy` `dialog_channel_admin_changed` `dialog_join` `elastic:adjust` `gantt_add_link` `gantt_group_add_task` `gantt_group_deleted` `gantt_group_updated` `gantt_remove_link` `gantt_reorder_task` `gantt_task_removed` `inbox-deleted` `inbox-message` `inbox-seen` `inbox-typing` `inbox_regroup` `kanban-board.drop` `labels_label_added` `labels_label_removed` `labels_label_updated` `labels_usage_update` `md-calendar-change` `md-calendar-close` `md-resize-textarea` `meeting-message` `meeting-request-join` `messages_pending` `minute_advanced_updated` `new_user` `new_user_accepted_invite` `online-support-customer-sentiment-updated` `online-support-feedback-review-updated` `online-support-lock-changed` `online-support-message-deleted` `online-support-message-edited` `online-support-negative-feedback` `online-support-own-response-feedback-updated` `online-support-request-message` `online-support-response-closed` `online-support-response-feedback-updated` `online-support-set-dialog-visible` `online-supporters-client-seen` `online-supporters-response-message` `online-supporters-support-seen` `out_workspace_chat_message` `out_workspace_chat_message_seen` `out_workspace_config_changed` `out_workspace_dashboard_message_changed` `out_workspace_inbox-message` `out_workspace_meeting-request-join` `out_workspace_new_user_accepted_invite` `out_workspace_online-support-message-deleted` `out_workspace_online-support-message-edited` `out_workspace_online-support-message-seen` `out_workspace_online-support-request-message` `out_workspace_online-support-response-closed` `out_workspace_online-support-response-message` `out_workspace_plan_updated` `out_workspace_reload_client` `out_workspace_set_do_not_disturb_until` `out_workspace_tasks_new_task` `out_workspace_terminate_session` `out_workspace_user_option_hide_dashboard_workspaces` `out_workspace_user_status` `out_workspace_wallpaper_changed` `out_workspace_workspace_name_updated` `payment_added` `payment_updated` `permission_update` `plan_updated` `polling_result_updated` `project_automation_updated` `project_automation_usage_updated` `project_custom_params_updated` `project_custom_params_usage_updated` `projects_kanban_board_added` `projects_kanban_board_moved` `projects_kanban_board_removed` `projects_kanban_board_updated` `projects_project_added` `projects_project_archived` `projects_project_removed` `projects_project_updated` `projects_usage_update` `reload_client` `storage_update` `support-chat-typing` `support-chat-typing-admin` `task_custom_params_changed` `task_kanban_remove_from_board` `task_kanban_set_weight` `tasks_new_task` `tasks_task_updated` `tasks_task_updated_token` `user_done_job` `user_option_hide_dashboard_workspaces` `user_profile` `workspace_name_updated`
+
+## انواع محتوای پیام چت (19)
+
+`messageMediaAnimatedEmoji` `messageMediaAudio` `messageMediaCallLog` `messageMediaDocument` `messageMediaMentionInChat` `messageMediaMentionInTask` `messageMediaMinute` `messageMediaMinuteAdvanced` `messageMediaMinuteTaskChange` `messageMediaMultiEmoji` `messageMediaPhoto` `messageMediaPolling` `messageMediaSticker` `messageMediaTask` `messageMediaTaskChanged` `messageMediaTaskReminderOwner` `messageMediaTaskSchedule` `messageMediaTask_Minimum` `messageMediaVideo`
+
+## رویدادهای سیستمی داخل گفتگو (14)
+
+`messageActionAddInboxMessage` `messageActionAddLabel` `messageActionChatAddPin` `messageActionChatAddUser` `messageActionChatCreate` `messageActionChatDeletePhoto` `messageActionChatDeleteUser` `messageActionChatEditPhoto` `messageActionChatEditTitle` `messageActionChatRemovePin` `messageActionCustomerInfoUpdated` `messageActionPollingStopped` `messageActionRemoveInboxMessage` `messageActionRemoveLabel`
+
+## قالب‌بندی متن پیام
+
+`messageEntityBold` `messageEntityBotCommand` `messageEntityCode` `messageEntityCommand` `messageEntityEmail` `messageEntityEmoji` `messageEntityHashtag` `messageEntityItalic` `messageEntityLinebreak` `messageEntityMention` `messageEntityMentionName` `messageEntityPre` `messageEntityTextUrl` `messageEntityUrl`
+
+## محدودیت‌های پلن (`checkPlanOption`) (6)
+
+`chat::channel::new` `chat::group::new` `crm::customer::new` `inbox::new` `notes::new` `task::new`
+
+## پرچم‌های دسترسی کاربر (24)
+
+`access_admin` `access_advanced` `access_chat_advanced` `access_chat_group_creator` `access_crm` `access_crm_creator` `access_crm_print` `access_guest_contacts` `access_is_guest` `access_monitoring` `access_owner` `access_project_creator` `access_project_monitoring` `access_sales` `access_sales_monitoring` `access_sales_payments` `access_sales_payments_monitoring` `access_secretariat` `access_settings` `access_support_admin` `access_support_attendance` `access_support_feedback_monitor` `access_time` `access_workspace_role_names`
+
+## تنظیمات سراسری اپ (`Config.App`) (30)
+
+`api_layer` `api_url` `apn_vapid_pk` `blacklist_file_types` `cache_id` `cdn_url` `client_url` `dark_mode` `debug` `dedicated_active_directory` `dedicated_complex_password` `dedicated_server` `dedicated_server_force_two_step_login` `dedicated_server_login_page_footer` `dedicated_server_logo` `dedicated_server_logout_url` `dedicated_server_title` `dedicated_sso` `dedicated_sso_authentication_flow` `dedicated_sso_auto_login` `dedicated_support_email` `dedicated_support_email_notification` `has_online_support` `io_url` `io_url_path` `is_afta` `locale` `max_upload_size` `tasks_page_size`
+
+## کلیدهای localStorage (28)
+
+`active_tab_` `calendar_view_show_complete_task_title` `chat_dialogs_active_folder` `checkIOSIsOldVersionCount` `dark_mode_state` `forgot_password` `gantt_view_group_closed_` `gantt_view_titles_divider_width` `iOSDeviceId` `iOSRegId` `inbox_message_filter_dialog` `inbox_message_filter_dialog_tab` `last_login_uid` `meeting_app_resume` `meeting_workspace` `meeting_workspace_after_reload` `meeting_workspace_mid` `permission` `show_board_compress_active` `show_board_statistics_disable` `show_task_after_reload_workspace` `sub_menu_` `task_history_sort_order` `tasks_calendar_visibility` `tasks_comments_layout_row` `tasks_inbox_sort_type` `token` `user_selector_hint_guest_button`
+
+## همه‌ی مقصدهای ناوبری در کد (`$state.go`) (49)
+
+`delete_account.request` `delete_account.validation` `login.forgot` `login.forgot_reset` `login.login` `login.profile` `workspace_switching` `ws.bookmarks` `ws.customer.all` `ws.customer.deals` `ws.customer.dialog` `ws.customer.label` `ws.customer.payments` `ws.fix_chat_groups` `ws.fix_customers` `ws.fix_projects` `ws.home` `ws.im` `ws.import_customers` `ws.import_project` `ws.inbox` `ws.inbox.label` `ws.inbox.thread` `ws.meeting` `ws.monitoring` `ws.monitoring_customers` `ws.monitoring_minutes` `ws.monitoring_project` `ws.monitoring_projects` `ws.monitoring_tasks` `ws.monitoring_user` `ws.monitoring_user_tasks` `ws.monitoring_users` `ws.notes.label` `ws.projects.all` `ws.projects.dialog` `ws.projects_monitor` `ws.projects_monitoring_calendar` `ws.projects_monitoring_project` `ws.projects_monitoring_tasks` `ws.search` `ws.settings` `ws.settings_mobile` `ws.support` `ws.tasks.done` `ws.tasks.inbox` `ws.tasks.label` `ws.tasks.outbox` `ws.tasks.project`
+
+## ماژول‌های AngularJS (163)
+
+- **component** (2): `ngWig` `ngWigPlugin`
+- **constant** (4): `pascalprechtTranslateOverrider` `$STORAGE_KEY` `recorderScriptUrl` `msdElasticConfig`
+- **controller** (61): `recorderController` `SideNavController` `HeaderController` `AppCtrl` `AppLoginSSOController` `AppLoginController` `AppLoginProfileController` `AppLoginRegisterController` `AppRegisterController` `AppRegisterCompleteController` `AppWorkspaceController` `AppWorkspaceSwitchingController` `AppDashboardController` `AppWorkspaceSettingsController` `AppDeleteAccountController` `AppDeleteAccountRequestController` `AppDeleteAccountController` `AppImController` `AppImDialogsController` `ChatViewCtrl` `ChatProjectStatisticsCtrl` `AppCustomerPaneController` `CrmHeaderCtrl` `AppImportCustomersController` `AppProjectPaneController` `AppDealsMonitoringController` `AppPaymentsMonitoringController` `AppPaymentsMonitoringDetailsController` `AppPaymentsMonitoringAllController` `AppPaymentsMonitoringChartsController` `AppNotesController` `AppInboxController` `AppTasksController` `AppTasksInboxController` `AppProjectFilesController` `AppTasksDoneController` `AppSearchController` `AppMonitoringController` `AppMonitoringUsersController` `AppMonitoringUserController` `AppMonitoringProjectsController` `AppMonitoringProjectController` `AppMonitoringTasksController` `AppMonitoringMinutesController` `AppMonitoringUserTasksController` `AppFixCustomersController` `AppFixProjectsController` `AppFixChatGroupsController` `AppMonitoringCustomersController` `AppMonitoringProjectsForUserCalendarController` `AppSupportChatController` `AppAdminSupportChatController` `AppNotificationHistoryController` `AppiOSNotificationController` `AppKanbanViewerController` `AppImportProjectController` `AppCalendarViewerController` `AppGanttViewerController` `AppMeetingStarterController` `AppMeetingViewerController` `QrCtrl`
+- **directive** (20): `translate` `translateAttr` `translateCloak` `translateNamespace` `translateLanguage` `dynamicLayout` `layoutOnLoad` `mdPersianCalendar` `mdPersianCalendarMonth` `mdPersianCalendarMonthBody` `mdPersianCalendarYear` `mdPersianCalendarYearBody` `mdPersianDatepicker` `istevenOmniBar` `ngAudioRecorderAnalyzer` `ngAudioRecorderWaveView` `ngAudioRecorder` `myPeerOnlineStatusLink` `myBookmarkToggleContainer` `myWorkspaceName`
+- **factory** (12): `$translateDefaultInterpolation` `$translationCache` `FilterService` `PositionService` `RankerService` `$$mdPersianDateUtil` `recorderUtils` `_` `sha256` `services` `notificationIOSService` `darkModeService`
+- **filter** (5): `translate` `as` `customFilter` `customRanker` `phoneNumber`
+- **provider** (5): `$stateEvents` `$translateSanitization` `recorderService` `ScrollBars` `ngWigToolbar`
+- **service** (54): `AppUsersManager` `AppCustomersManager` `AppDealsManager` `AppChatsManager` `AppPeersManager` `AppImManager` `AppChatProfileManager` `AppChatProfileManager` `AppPhotosManager` `AppAudiosManager` `AppFilesManager` `AppDraggedFilesManager` `AppHelpManager` `AppLabelManager` `AppInboxManager` `AppTasksManager` `AppTaskSchedulerManager` `AppTasksRepeatingManager` `AppTaskTemplatesManager` `AppProjectsManager` `AppProjectAdvancedHistoryManager` `AppProjectDuplicateManager` `AppKanbanManager` `AppProfileManager` `AppWorkspaceManager` `AppNotesManager` `AppCallLogManager` `AppMinutesManager` `AppMinutesAdvancedManager` `AppSecretariatManager` `AppSupportManager` `AppPaymentsManager` `AppAttendanceManager` `AppWorkspaceSwitcherManager` `AppMeetingManager` `AppGanttManager` `AppPollingManager` `AppFixChangeUserManager` `AppAnimatedEmojiManager` `AppNowrouzManager` `AppProjectAutomationManager` `AppProjectAutomationCustomParamsManager` `AppProjectAutomationCustomParamsTemplateManager` `AppProjectAutomationTextComposeManager` `AppProjectAutomationFormRequestsManager` `AppProjectAutomationWorkflowManager` `AppProjectAutomationWorkflowRoleManager` `AppProjectAutomationWorkflowWizardManager` `AppProjectAutomationWorkflowWizardTemplatesManager` `shamsiHolidaysService` `FinalSanitizeService` `RichTextProcessor` `AppInternetConnectionManager` `IdleManager`
+
+## دیکشنری ترجمه (623 کلید)
+
+کامل در `site_map.json` زیر کلید `i18n`.
+
