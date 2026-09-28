@@ -1,0 +1,30 @@
+[Unit]
+Description=Mizito MCP server (streamable HTTP behind nginx)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=mizito-mcp
+Group=mizito-mcp
+WorkingDirectory=/opt/mizito-mcp
+# server.py reads /opt/mizito-mcp/.env (Mizito credentials + MCP_* transport settings)
+ExecStart=/opt/mizito-mcp/.venv/bin/python server.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

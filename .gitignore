@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.deploy-secret
+connector-url.txt
+DEPLOYMENT.local.md

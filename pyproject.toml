@@ -1,0 +1,10 @@
+[project]
+name = "mizito-mcp"
+version = "0.1.0"
+description = "MCP server that exposes a Mizito workspace (chats, projects, tasks, letters) to Claude and ChatGPT"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=1.12",
+    "httpx>=0.27",
+    "python-dotenv>=1.0",
+]
