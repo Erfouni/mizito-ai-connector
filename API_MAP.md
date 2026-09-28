@@ -81,6 +81,21 @@ Names can use Arabic `ي` instead of Persian `ی` (e.g. the bot «دستيار �
 | `notes.update` | the whole note `{_id, title, note, photo, color, checklist, labels}` | |
 | `notes.archiveNote` / `notes.updatePinState` / `notes.setChecklistValue` | `{note_id, archived}` / `{pinned, noteId}` / `{note_id, check_index, checked}` | |
 
+### Projects the way the web app makes them (verified 2026-09-28)
+
+- The «ایجاد پروژه» button calls `chat.createDialog {title, is_public:false, is_project_group:true, members:[other user ids], color:"grey", labels?}`.
+  It creates the project **and** its project conversation. The response is the dialog, whose `project_entity` is the project id.
+  The creator is added automatically and must not be listed in `members`.
+- `projects.allSummary` (the Projects tab) only lists projects that have a `dialog`. Projects made with `projects.add` exist in
+  `projects.getList` but never show in the tab.
+- Project members are the members of the project conversation: add them with `chat.inviteUser {dialog, user}`.
+- `chat.archiveProject {dialog, project, withArchiveTasks}` archives a project. After that it disappears from `projects.getList`
+  and `projects.full` answers 400.
+- The project calendar is `tasks.upcoming {project_id, all:true, from:null, filter:{calendar_year, calendar_month, visibility_type}}`.
+- To move a task to another project, send `tasks.save` with the new `project` and `kanban_board:null`; it lands on the target's
+  first board, and reminder, deadline and assignees are kept. Completed tasks are not editable: the save is silently ignored.
+- `workspace.inviteMember {name, email_phone, is_guest}` answers `{success, message}` (not exercised: it invites a real person).
+
 Read from the client but not exercised: `tasks.removeTask` / `tasks.removeTaskUndo {token}`, `chat.removeSentMessage {dialog, mid}`,
 `chat.inviteUser {dialog, user}`, `notes.deleteNote {note_id, deleted}`, `customer.add` (the web form object: `name, phone:[{label:"اصلی", phone_number}],
 mobile:[{phone_number}], address, notes, members, website, email, postal_code, fax, national_code, economic_code, representatives, photo`).

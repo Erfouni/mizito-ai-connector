@@ -214,18 +214,55 @@ def mizito_search_messages(query: str, scope: Literal["chat", "customers"] = "ch
 # --- projects & tasks ---------------------------------------------------------------
 
 
+def _projects_tab() -> dict[str, dict]:
+    """projects.allSummary rows keyed by project id: what the web app's Projects tab shows."""
+    return {row.get("project"): row for row in (client.call("projects.allSummary", {}) or {}).get("summaries") or []}
+
+
+def _project_overview(project_id: str) -> dict:
+    full = client.call("projects.full", {"project_id": project_id}) or {}
+    if not full.get("_id"):
+        raise ToolError(f"Project {project_id!r} not found (ids come from mizito_list_projects)")
+    summary = _projects_tab().get(project_id)
+    stats = ("total_tasks_count", "me_remain_count", "me_overdue", "me_today", "me_completed_count",
+             "others_overdue", "others_completed_count")
+    return {
+        "project_id": full["_id"],
+        "title": full.get("title"),
+        "color": full.get("color"),
+        "owner": client.user_name(full.get("owner")),
+        "members": [{"id": m, "name": client.user_name(m)} for m in full.get("members") or []],
+        "admins": [client.user_name(m) for m in full.get("members_admin") or []],
+        "boards": [{"id": b.get("_id"), "title": b.get("title")} for b in full.get("kanban_boards") or []],
+        "conversation_id": full.get("dialog"),
+        "has_conversation": bool(full.get("dialog")),
+        "in_projects_tab": summary is not None,
+        "archived": bool(full.get("archived") or (summary or {}).get("is_archived")),
+        "is_advanced": bool(full.get("is_advanced")),
+        "task_stats": {k: summary.get(k) for k in stats} if summary else None,
+    }
+
+
 @mcp.tool(annotations=READ)
 def mizito_list_projects() -> dict:
-    """Projects of the active workspace with their status list."""
+    """Projects of the active workspace. has_conversation/in_projects_tab are false for projects made
+    without a project conversation: they exist but the web app's Projects tab does not show them."""
     data = client.call("projects.getList", {}) or {}
-    projects = compact(data.get("projects") or [])
+    tab = _projects_tab()
+    projects = []
+    for p in data.get("projects") or []:
+        row = compact(p)
+        row["has_conversation"] = bool(p.get("dialog"))
+        row["in_projects_tab"] = p.get("_id") in tab
+        projects.append(row)
     return {"count": len(projects), "projects": projects, "statuses": compact(data.get("project_status") or [])}
 
 
 @mcp.tool(annotations=READ)
 def mizito_get_project(project_id: str) -> dict:
-    """Full project details (members, kanban boards, settings)."""
-    return compact(client.call("projects.full", {"project_id": project_id}) or {})
+    """Everything needed to verify a project: members (with names), admins, kanban boards, its project
+    conversation, whether the Projects tab shows it, archive state and task statistics."""
+    return _project_overview(project_id)
 
 
 @mcp.tool(annotations=READ)
@@ -372,17 +409,21 @@ def mizito_calendar(
     year: int | None = None,
     month: int | None = None,
     by: Literal["reminder", "deadline"] = "reminder",
+    project_id: str | None = None,
 ) -> dict:
     """My tasks on the Mizito calendar (تقویم) for one Jalali month. The calendar places tasks by
     their reminder time (by="reminder", the default); by="deadline" only shows tasks with a deadline
     in advanced projects. year/month are Jalali (e.g. 1405, 7 = Mehr) and default to the current
-    month in Tehran. Tasks without a reminder time are returned separately."""
+    month in Tehran. Tasks without a reminder time are returned separately. With project_id it shows
+    that project's calendar (every member's tasks) instead of your own; use it to check calendar events
+    before adding new ones."""
     if not year or not month:
         now = datetime.now(TEHRAN)
         year, month, _ = _gregorian_to_jalali(now.year, now.month, now.day)
     if not 1 <= month <= 12:
         raise ToolError("month must be 1-12 (Jalali: 1 = Farvardin ... 7 = Mehr ... 12 = Esfand)")
-    base = {"inbox": True, "all": True, "from": None}
+    base = {"project_id": project_id} if project_id else {"inbox": True}
+    base.update({"all": True, "from": None})
     visibility = "alarm_at" if by == "reminder" else "deadline"
     scheduled = client.call("tasks.upcoming", {**base, "filter": {
         "calendar_year": year, "calendar_month": month, "visibility_type": visibility}}) or []
@@ -390,7 +431,7 @@ def mizito_calendar(
     _remember_tasks(scheduled)
     _remember_tasks(unscheduled)
     return {
-        "year": year, "month": month, "by": by, "count": len(scheduled),
+        "year": year, "month": month, "by": by, "project_id": project_id, "count": len(scheduled),
         "tasks": [_calendar_row(t) for t in scheduled],
         "repeating_or_without_time": [_calendar_row(t) for t in unscheduled],
     }
@@ -610,9 +651,10 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
         notes: str | None = None,
         assignee_ids: list[str] | None = None,
         label_ids: list[str] | None = None,
+        project_id: str | None = None,
     ) -> dict:
-        """Edit a task's title, description, assignees and/or labels (ids from mizito_list_labels);
-        omitted fields stay unchanged."""
+        """Edit a task's title, description, assignees and/or labels (ids from mizito_list_labels), or move
+        it to another project (project_id; it lands on that project's first board). Omitted fields stay."""
         changes = {}
         if title is not None:
             changes["title"] = title
@@ -622,10 +664,18 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
             changes["assignee"] = assignee_ids
         if label_ids is not None:
             changes["labels"] = label_ids
+        if project_id is not None:
+            changes.update(project=project_id, kanban_board=None)
         if not changes:
-            raise ToolError("Nothing to change: pass title, notes, assignee_ids or label_ids")
-        _save_task(_load_task(task_id), **changes)
-        return {"updated": True, "task": _task_ref(_load_task(task_id))}
+            raise ToolError("Nothing to change: pass title, notes, assignee_ids, label_ids or project_id")
+        task = _load_task(task_id)
+        if task.get("completed"):
+            raise ToolError("Mizito does not let you edit a completed task: reopen it first (mizito_set_task_completed)")
+        _save_task(task, **changes)
+        after = _load_task(task_id)
+        if project_id is not None and after.get("project") != project_id:
+            raise ToolError("Mizito did not move the task (are you a member of the target project?)")
+        return {"updated": True, "task": _task_ref(after)}
 
     @mcp.tool(annotations=WRITE)
     def mizito_comment_on_task(task_id: str, text: str) -> dict:
@@ -704,15 +754,82 @@ if os.getenv("MIZITO_ENABLE_WRITE") == "1":
 
     @mcp.tool(annotations=WRITE)
     def mizito_create_project(title: str, member_ids: list[str] | None = None, color: str = "grey") -> dict:
-        """Create a project with the given members (ids from mizito_list_users). Only on explicit request."""
-        payload = {"title": title, "color": color, "members": member_ids or []}
-        if client.call("projects.add", payload) is False:
-            raise ToolError("Mizito rejected the project (no permission to create projects?)")
-        # projects.add only answers true; find the new project (ObjectIds grow over time).
-        matches = [p for p in (client.call("projects.getList", {}) or {}).get("projects", []) if p.get("title") == title]
-        newest = max(matches, key=lambda p: p.get("_id", ""), default={})
-        return {"created": True, "project": compact(newest)}
+        """Create a project exactly like the web app's «ایجاد پروژه» button: the project plus its project
+        conversation, with you as owner/admin and member_ids (from mizito_list_users) as members. It shows
+        in the Projects tab. Returns project_id and conversation_id. Only on the user's explicit request."""
+        me = client.my_user_id()
+        payload = {"title": title, "is_public": False, "is_project_group": True,
+                   "members": [m for m in member_ids or [] if m != me], "color": color}
+        dialog = client.call("chat.createDialog", payload) or {}
+        project_id = dialog.get("project_entity") if isinstance(dialog, dict) else None
+        if not project_id and isinstance(dialog, dict) and dialog.get("_id"):
+            project_id = next((p["_id"] for p in (client.call("projects.getList", {}) or {}).get("projects", [])
+                               if p.get("dialog") == dialog["_id"]), None)
+        if not project_id:
+            raise ToolError("Mizito did not create the project (no permission to create projects?)")
+        return {"created": True, "project_id": project_id, "conversation_id": dialog.get("_id"),
+                "project": _project_overview(project_id)}
 
+    @mcp.tool(annotations=WRITE)
+    def mizito_add_project_members(project_id: str, user_ids: list[str]) -> dict:
+        """Add workspace members (ids from mizito_list_users) to a project. They are notified by Mizito.
+        For people without a Mizito account use mizito_invite_workspace_member first."""
+        full = client.call("projects.full", {"project_id": project_id}) or {}
+        if not full.get("_id"):
+            raise ToolError(f"Project {project_id!r} not found")
+        current = list(full.get("members") or [])
+        new = [u for u in user_ids if u not in current]
+        if full.get("dialog"):
+            for user in new:  # project members are the members of the project conversation
+                client.call("chat.inviteUser", {"dialog": full["dialog"], "user": user})
+        elif new:
+            payload = {"project_id": project_id, "title": full.get("title"), "color": full.get("color") or "grey",
+                       "members": current + new}
+            if client.call("projects.save", payload) is False:
+                raise ToolError("Mizito rejected the change (only project admins can add members)")
+        return {"added": len(new), "project": _project_overview(project_id)}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_invite_workspace_member(name: str, email_or_phone: str, as_guest: bool = False) -> dict:
+        """Invite someone without a Mizito account into the workspace by email or mobile number (Mizito
+        sends them the invitation). as_guest limits what they see. Workspace admins may be required."""
+        result = client.call("workspace.inviteMember", {"name": name, "email_phone": email_or_phone, "is_guest": as_guest})
+        if isinstance(result, dict) and not result.get("success"):
+            raise ToolError(f"Mizito did not send the invitation: {result.get('message') or result}")
+        return {"invited": True, "result": compact(result)}
+
+    @mcp.tool(annotations=WRITE)
+    def mizito_create_calendar_event(
+        project_id: str,
+        title: str,
+        start: str,
+        end: str | None = None,
+        description: str = "",
+        attendee_ids: list[str] | None = None,
+    ) -> dict:
+        """Add an event to the Mizito calendar. Mizito has no separate event object: the calendar shows
+        tasks at their reminder time, so this creates a task in the project with reminder = start and
+        deadline = end, assigned to attendee_ids (default: you). start/end are ISO 8601 with offset, e.g.
+        "2026-10-01T10:00:00+03:30". Check mizito_calendar(project_id=...) first to avoid duplicates."""
+        return mizito_create_task(title=title, assignee_ids=attendee_ids or [client.my_user_id()],
+                                  project_id=project_id, notes=description, deadline=end, remind_at=start)
+
+    @mcp.tool(annotations=WRITE_UPDATE)
+    def mizito_archive_project(project_id: str, with_tasks: bool = False) -> dict:
+        """Archive a project (like the web app's archive dialog; it can be restored from the web app).
+        with_tasks also archives its tasks. Projects without a project conversation can only be archived
+        by a workspace admin in the web app."""
+        full = client.call("projects.full", {"project_id": project_id}) or {}
+        if not full.get("_id"):
+            raise ToolError(f"Project {project_id!r} not found")
+        if not full.get("dialog"):
+            raise ToolError("This project has no project conversation; only a workspace admin can archive it")
+        client.call("chat.archiveProject", {"dialog": full["dialog"], "project": project_id, "withArchiveTasks": with_tasks})
+        # An archived project drops out of projects.getList (and projects.full answers 400 for it).
+        still_listed = any(p.get("_id") == project_id for p in (client.call("projects.getList", {}) or {}).get("projects", []))
+        if still_listed:
+            raise ToolError("Mizito did not archive the project (project admin rights needed?)")
+        return {"archived": True, "project_id": project_id, "title": full.get("title"), "tasks_archived": with_tasks}
 
     # --- calendar, bookmarks and trash for tasks ---
 
