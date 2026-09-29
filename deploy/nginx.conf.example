@@ -2,6 +2,8 @@ server {
     listen 80;
     listen [::]:80;
     server_name mcp.example.com;
+    # Let's Encrypt renews the certificate through this path (certbot --webroot).
+    location /.well-known/acme-challenge/ { root /var/www/letsencrypt; }
     location / { return 301 https://$host$request_uri; }
 }
 
@@ -20,7 +22,8 @@ server {
 
     # The MCP URL path is the connector's secret: keep it out of the access log.
     access_log off;
-    client_max_body_size 1m;
+    # Files uploaded through mizito_upload_file arrive base64-encoded in the request (up to 20 MB of file).
+    client_max_body_size 32m;
 
     # The app answers only on its secret path (MCP_HTTP_PATH) and returns 404 elsewhere.
     location / {

@@ -25,7 +25,7 @@ from pydantic import Field
 from mizito_client import MizitoClient, MizitoError, compact, html_to_text
 
 ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT / ".env")
+load_dotenv(ROOT / ".env", interpolate=False)  # passwords may contain "${"
 logging.getLogger("httpx").setLevel(logging.WARNING)  # one INFO line per API call is noise
 
 client = MizitoClient.from_env()
