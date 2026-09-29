@@ -3,6 +3,15 @@
 Reverse-engineered on 2026-09-27 from the office.mizito.ir web app (AngularJS bundle `a_.js`,
 `services.invokeApi`). Not an official or stable API: it can change when Mizito ships a new client.
 
+> This is the first, hand-written overview. The complete and current reference is
+> [docs/site-map/api.md](docs/site-map/api.md) (all 369 endpoints, their parameters, call sites and MCP status),
+> and every tool is described in [docs/TOOLS.md](docs/TOOLS.md).
+> Other findings since this file was written: uploads go to `POST /api/content/upload` (multipart field `upload`,
+> header `x-token`) and return a media object; files download from `https://cdn1.mizito.ir/cdn/dl/<token>` where the
+> token comes from `content.getDownloadLink {content: <file's content JWT>}`; polls and meeting minutes are chat
+> messages whose `media` is `messageMediaPolling` / `messageMediaMinute`; task reminders and repeats live in
+> `alarm_options` sent with `tasks.add` / `tasks.save`.
+
 ## Transport
 
 | | |

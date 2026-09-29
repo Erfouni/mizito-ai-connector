@@ -11,7 +11,8 @@ pages = (DOCS / "pages.md").read_text(encoding="utf-8")
 views = (DOCS / "views.md").read_text(encoding="utf-8")
 api = (DOCS / "api.md").read_text(encoding="utf-8")
 rt = (DOCS / "realtime-and-types.md").read_text(encoding="utf-8")
-server = (ROOT / "server.py").read_text(encoding="utf-8")
+server = "\n".join(f.read_text(encoding="utf-8") for f in
+                   [ROOT / "server.py", ROOT / "mizito_client.py", *sorted((ROOT / "mizito").glob("*.py"))])
 
 problems = []
 for s in data["states"]:
@@ -23,9 +24,9 @@ for name in data["views"]:
 for ep in data["endpoints"]:
     if f"| `{ep}` |" not in api:
         problems.append(f"endpoint missing from api.md: {ep}")
-for ep in set(re.findall(r"client\.(?:call|_post)\(\s*\"([\w.]+)\"", server)):
+for ep in set(re.findall(r"(?:client\.call|call|_post)\(\s*\"([\w.]+)\"", server)):
     if ep not in data["endpoints"]:
-        problems.append(f"endpoint used by server.py but not found in the web client: {ep}")
+        problems.append(f"endpoint used by the MCP code but not found in the web client: {ep}")
 for key in ("message_media_types", "message_action_types", "plan_options", "access_flags", "local_storage"):
     for item in data[key]:
         if f"`{item}`" not in rt:

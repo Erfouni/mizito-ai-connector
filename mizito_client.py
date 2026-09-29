@@ -148,7 +148,8 @@ class MizitoClient:
             headers={"x-token": self.token or ""},
         )
 
-    def call(self, endpoint: str, payload: dict | None = None) -> Any:
+    def _send(self, endpoint: str, request) -> httpx.Response:
+        """Run request() with the current token, logging in first / again on 401 when credentials allow."""
         with self._lock:
             if not self.token:
                 if not self.can_login:
@@ -157,18 +158,57 @@ class MizitoClient:
                     )
                 self.login()
             try:
-                resp = self._post(endpoint, payload)
+                resp = request()
                 if resp.status_code == 401 and self.can_login:
                     self.login()
-                    resp = self._post(endpoint, payload)
+                    resp = request()
             except httpx.HTTPError as exc:
                 raise MizitoError(f"{endpoint} -> network error talking to Mizito: {exc!r}") from exc
+        return resp
+
+    def upload(self, file_name: str, data: bytes, mime_type: str, send_as_file: bool = True) -> Any:
+        """Upload a file like the web uploader: multipart field "upload" to /api/content/upload.
+        Returns the media object (e.g. {"_": "messageMediaDocument", "document": {...}})."""
+        def request() -> httpx.Response:
+            return self._http.post(
+                f"{self.api_url}/api/content/upload",
+                headers={"x-token": self.token or ""},
+                files={"upload": (file_name, data, mime_type)},
+                data={"sendAsFile": "true" if send_as_file else "false"},
+                timeout=180.0,
+            )
+
+        return self._decode("content.upload", self._send("content.upload", request))
+
+    def fetch(self, url: str, max_bytes: int) -> tuple[bytes, str | None]:
+        """Download a CDN file link (the link itself grants access; no session token is sent)."""
+        try:
+            with self._http.stream("GET", url, timeout=180.0) as resp:
+                if resp.status_code >= 400:
+                    raise MizitoError(f"file download -> HTTP {resp.status_code}")
+                chunks, size = [], 0
+                for chunk in resp.iter_bytes():
+                    size += len(chunk)
+                    if size > max_bytes:
+                        raise MizitoError(f"file is larger than {max_bytes // 1_000_000} MB")
+                    chunks.append(chunk)
+                return b"".join(chunks), resp.headers.get("content-type")
+        except httpx.HTTPError as exc:
+            raise MizitoError(f"file download -> network error: {exc!r}") from exc
+
+    def call(self, endpoint: str, payload: dict | None = None) -> Any:
+        return self._decode(endpoint, self._send(endpoint, lambda: self._post(endpoint, payload)))
+
+    def _decode(self, endpoint: str, resp: httpx.Response) -> Any:
         if resp.status_code == 401:
             raise MizitoAuthError("Mizito rejected the token (401): it expired or was revoked. Update MIZITO_TOKEN.")
         if resp.status_code >= 400:
             detail = "HTML error page" if "html" in resp.headers.get("content-type", "") else resp.text[:300]
             raise MizitoError(f"{endpoint} -> HTTP {resp.status_code} ({detail}); wrong parameters or no access")
-        data = resp.json() if resp.content else None
+        try:
+            data = resp.json() if resp.content else None
+        except ValueError:  # a few endpoints (print views) answer with plain HTML
+            data = resp.text
         if isinstance(data, dict) and data.get("db_error"):
             raise MizitoError(f"{endpoint} -> server reported db_error")
         return data

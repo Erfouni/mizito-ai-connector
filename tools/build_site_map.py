@@ -6,6 +6,7 @@ usage: python tools/build_site_map.py <dir with the json files>
 """
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -28,56 +29,110 @@ PARENTS = defaultdict(set)
 for _name, _v in VIEWS.items():
     for _inc in _v.get("includes", []):
         PARENTS[_inc].add(_name)
-SERVER = (ROOT / "server.py").read_text(encoding="utf-8")
+CODE_FILES = [ROOT / "server.py", ROOT / "mizito_client.py", *sorted((ROOT / "mizito").glob("*.py"))]
+SERVER = "\n".join(f.read_text(encoding="utf-8") for f in CODE_FILES)
 
 # ---------------------------------------------------------------------------------------------
-# MCP coverage: which server.py function calls which endpoint, plus what the tests established.
+# MCP coverage: which function of the MCP code calls which endpoint, plus what the tests established.
 # ---------------------------------------------------------------------------------------------
-defs = [(m.start(), m.group(1)) for m in re.finditer(r"^\s*def (\w+)\(", SERVER, flags=re.M)]
 mcp_use: dict[str, set[str]] = defaultdict(set)
-for m in re.finditer(r"client\.(?:call|_post)\(\s*\"([\w.]+)\"", SERVER):
-    owner = [name for pos, name in defs if pos < m.start()]
-    mcp_use[m.group(1)].add(owner[-1] if owner else "?")
-# endpoints called with a computed name inside server.py
-for name in ("chat.pinDialog", "chat.unpinDialog"):
-    mcp_use[name].add("mizito_manage_conversation")
+# module-level tables of endpoint names, and the tool that uses each table
+TABLE_OWNERS = {("reports", "CHARTS"): "mizito_reports", ("automation", "_EDIT"): "mizito_manage_project_automation"}
+for _file in CODE_FILES:
+    _tree = ast.parse(_file.read_text(encoding="utf-8"))
+    for _node in ast.walk(_tree):
+        if isinstance(_node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            for _sub in ast.walk(_node):
+                if isinstance(_sub, ast.Constant) and isinstance(_sub.value, str) and _sub.value in MAP["endpoints"]:
+                    mcp_use[_sub.value].add(_node.name)
+    for _node in _tree.body:
+        if isinstance(_node, ast.Assign) and isinstance(_node.targets[0], ast.Name):
+            _owner = TABLE_OWNERS.get((_file.stem, _node.targets[0].id))
+            for _sub in ast.walk(_node.value):
+                if _owner and isinstance(_sub, ast.Constant) and _sub.value in MAP["endpoints"]:
+                    mcp_use[_sub.value].add(_owner)
+# endpoint names the code builds at run time (f-strings, concatenation)
+DYNAMIC = {
+    "attendance.start": "mizito_attendance", "attendance.stop": "mizito_attendance",
+    "inbox.archive": "mizito_manage_letter", "inbox.unArchive": "mizito_manage_letter",
+    "inbox.archive.sender": "mizito_manage_letter", "inbox.unArchive.sender": "mizito_manage_letter",
+    "fix.projects.getAll": "mizito_admin_list_all", "fix.chatGroups.getAll": "mizito_admin_list_all",
+    "fix.customer.getAll": "mizito_admin_list_all", "fix.projects.getMembers": "mizito_admin_list_all",
+    "fix.chatGroups.getMembers": "mizito_admin_list_all", "fix.customer.getMembers": "mizito_admin_list_all",
+    "fix.projects.grantAccess": "mizito_admin_grant_access", "fix.chatGroups.grantAccess": "mizito_admin_grant_access",
+    "fix.customer.grantAccess": "mizito_admin_grant_access",
+}
+for _ep, _tool in DYNAMIC.items():
+    mcp_use[_ep].add(_tool)
 
-TESTED = {
-    "workspace.userId", "workspace.getUsers", "workspace.planInfo", "dashboard.getAllSummary",
+TESTED = {  # called successfully on a real account (trial plan, not a workspace admin)
+    "workspace.userId", "workspace.getUsers", "workspace.planInfo", "workspace.name", "dashboard.getAllSummary",
+    "dashboard.getPending", "dashboard.getAllBadges",
     "chat.getDialogs", "chat.getFullChat", "chat.getChatView", "chat.getHistory", "chat.search", "chat.send",
     "chat.seen", "chat.getMessages", "chat.createDialog", "chat.updateTitle", "chat.pinDialog", "chat.unpinDialog",
-    "chat.addPinMessage", "chat.toggleBookmark", "chat.archiveProject",
-    "projects.getList", "projects.allSummary", "projects.full", "projects.add", "projects.save",
-    "projects.addKanbanBoard", "projects.history",
+    "chat.addPinMessage", "chat.removePinMessage", "chat.toggleBookmark", "chat.archiveProject",
+    "chat.getMessageByDate", "chat.getMessageIndex", "chat.getStatusDetails", "chat.getDialogUnDoneTasksCount",
+    "chat.updateSentMessage", "chat.removeSentMessage", "chat.saveSettings",
+    "projects.getList", "projects.allSummary", "projects.full", "projects.add", "projects.save", "projects.addKanbanBoard",
+    "projects.history", "projects.chatSummary", "projects.updateKanbanBoard", "projects.setKanbanBoardOrder",
+    "projects.setChatProjectColor", "projects.getProjectFiles",
     "tasks.upcoming", "tasks.getAll", "tasks.get", "tasks.add", "tasks.save", "tasks.newComment", "tasks.getComments",
     "tasks.setCompleted", "tasks.updateDeadline", "tasks.updateProgress", "tasks.setChecklistCheckedValue",
-    "tasks.snooze", "tasks.toggleBookmark", "tasks.history", "tasks.badge",
+    "tasks.snooze", "tasks.toggleBookmark", "tasks.history", "tasks.badge", "tasks.getSeenDetails",
+    "tasks.ganttGetTaskInfo", "tasks.setKanbanWeight", "tasks.setKanbanWeightSort", "tasks.editComment",
+    "tasks.deleteComment", "tasks.createShareLink",
     "inbox.getInbox", "inbox.getHistory", "inbox.send", "inbox.archive", "inbox.unArchive", "inbox.toggleBookmark",
-    "inbox.seen",
+    "inbox.seen", "inbox.getSeenDetails", "inbox.changeMessageDialogs", "inbox.changeMessageLabels",
+    "inbox.archive.sender", "inbox.unArchive.sender", "inbox.deleteMessage",
     "notes.getAll", "notes.create", "notes.update", "notes.archiveNote", "notes.updatePinState", "notes.setChecklistValue",
-    "labels.getAll", "labels.add",
+    "notes.deleteNote",
+    "labels.getAll", "labels.add", "labels.save", "labels.delete", "labels.history",
+    "minute.update", "minute.getTemplates", "minuteAdvanced.getTemplates",
+    "polling.getTemplates", "polling.setPollingVote", "polling.retractVote", "polling.stopPolling",
+    "attendance.getOnlineHistory", "projectAutomation.loadConstants", "formRequestTemplate.getAll",
+    "formRequestTemplate.getAllForms", "support.clientOnlineHistory", "support.getClientUnreadCount",
+    "content.getDownloadLink",
 }
 UNTESTED_NOTES = {
-    "tasks.removeTask": "حذف است؛ تست نشد",
-    "tasks.removeTaskUndo": "برگرداندن حذف؛ تست نشد",
-    "chat.removeSentMessage": "حذف است؛ تست نشد",
     "chat.inviteUser": "به همکار واقعی اعلان می‌رود؛ تست نشد",
-    "chat.updateSentMessage": "فقط برای پیام دیده‌نشده؛ مسیر موفق تست نشد",
-    "notes.deleteNote": "حذف است؛ تست نشد",
-    "inbox.changeMessageLabels": "تست نشد",
+    "chat.deleteUser": "روی گروه واقعی اثر دارد؛ تست نشد",
+    "chat.setAdmin": "روی گروه واقعی اثر دارد؛ تست نشد",
+    "chat.deleteDialog": "حذف برگشت‌ناپذیر گروه؛ با confirm محافظت می‌شود؛ تست نشد",
     "workspace.inviteMember": "دعوت واقعی می‌فرستد؛ تست نشد",
     "workspace.switch": "حساب تست فقط یک میزکار داشت",
-    "customer.add": "پشت MIZITO_ENABLE_CRM؛ روی حساب تست 400 داد",
+    "attendance.start": "به انتخاب کاربر تست نشد", "attendance.stop": "به انتخاب کاربر تست نشد",
+    "attendance.delete": "به انتخاب کاربر تست نشد",
+    "profile.setOnlineStatus": "به انتخاب کاربر تست نشد", "profile.setDontDisturbUntil": "به انتخاب کاربر تست نشد",
+    "support.sendFromClient": "به پشتیبانی واقعی میزیتو می‌رود؛ تست نشد",
+    "support.sendSuggestion": "به پشتیبانی واقعی میزیتو می‌رود؛ تست نشد",
+    "dashboard.acceptInviteRequest": "دعوتی در حساب تست نبود", "dashboard.cancelInviteRequest": "دعوتی در حساب تست نبود",
+    "tasks.removeTask": "برگشت‌پذیر (سطل زباله)؛ تست نشد", "tasks.removeTaskUndo": "تست نشد",
 }
-REFUSED = {
-    "projects.archive": "405 برای غیرمدیر (در وب «حذف با امکان بازگشت» است)",
+REFUSED = {  # built from the web client's code; the test account's plan or role refused them
+    "projects.archive": "405 برای غیرمدیر",
     "projects.undoArchive": "405 برای غیرمدیر",
-    "customer.add": "400 حتی با payload دقیق فرم وب (CRM در پلن نیست)",
+    "projects.activateAdvancedFeatures": "400 روی پلن آزمایشی (پروژه‌ی پیشرفته)",
+    "projects.clone": "400 روی پلن آزمایشی",
+    "projects.getGanttData": "400 (پروژه‌ی پیشرفته با گانت لازم است)",
+    "projectAutomation.getAll": "400 (پروژه‌ی پیشرفته با اتوماسیون لازم است)",
+    "projectAutomationWorkflow.getAll": "400 (پروژه‌ی پیشرفته لازم است)",
+    "taskTemplates.getAll": "400 (پروژه‌ی پیشرفته لازم است)",
+    "taskTemplates.getAllTemplates": "400 (پروژه‌ی پیشرفته لازم است)",
+    "polling.printPollingResults": "400 (گزارش چاپی، پلن سازمانی)",
+    "attendance.getHistory": "405 (حضور دستی در این میزکار خاموش است)",
+    "inbox.getLastSecretariatStatus": "400 (دبیرخانه در پلن نیست)",
+    "workspace.getPermissions": "400 برای غیرمدیر",
+    "fix.projects.getAll": "400 برای غیرمدیر",
+    "customer.add": "400 (CRM در پلن نیست)",
     "deal.getAll": "400 (فروش در پلن نیست)",
     "deal.getReportStatistics": "400 (فروش در پلن نیست)",
     "monitor.workspace": "400 (دسترسی مدیر/پلن)",
     "monitor.project": "400 (دسترسی مدیر/پلن)",
     "projects.monitor.project": "400 (دسترسی مدیر/پلن)",
+    "monitor.projectsSummary": "400 (دسترسی مدیر/پلن)",
+    "monitor.chart.tasksDone": "400 (دسترسی مدیر/پلن)",
+    "monitor.user": "400 (دسترسی مدیر/پلن)",
+    "monitor.minutes": "400 (دسترسی مدیر/پلن)",
 }
 MODULE_FA = {
     "attendance": "حضور و غیاب", "chat": "گفتگو", "content": "فایل و محتوا", "customer": "CRM – مشتریان",
@@ -89,30 +144,43 @@ MODULE_FA = {
     "projectAutomationWorkflow": "گردش‌کار اتوماسیون", "projects": "پروژه‌ها", "session": "نشست و حساب کاربری",
     "support": "پشتیبانی میزیتو", "taskTemplates": "قالب‌های وظیفه", "tasks": "وظایف", "workspace": "میزکار",
 }
-EXCLUDED_WHY = {
-    "payment": "مالی و پرداخت: عمداً کنار گذاشته شد",
-    "session": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
-    "profile": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
-    "support": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-    "fix": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-    "attendance": "حضور و غیاب: پیاده نشد",
+EXCLUDED_WHY = {  # modules without tools, and why
+    "session": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
+    "profile": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
+    "payment": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
     "meeting": "تماس تصویری (WebRTC): از طریق MCP قابل استفاده نیست",
-    "projectAutomation": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-    "projectAutomationWorkflow": "گردش‌کار اتوماسیون: پیاده نشد",
-    "formRequestTemplate": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-    "minute": "صورتجلسه (به‌صورت پیوست چت ساخته می‌شود): پیاده نشد",
-    "minuteAdvanced": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-    "polling": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-    "customer": "CRM: پلن حساب تست شامل آن نبود",
-    "deal": "CRM فروش: پلن حساب تست شامل آن نبود",
-    "monitor": "گزارش‌ها: دسترسی مدیر یا پلن لازم",
-    "taskTemplates": "قالب وظیفه: پیاده نشد",
-    "device": "ثبت دستگاه برای اعلان: خارج از محدوده",
-    "feedback": "بازخورد به میزیتو: خارج از محدوده",
-    "content": "برش عکس: خارج از محدوده",
+    "device": "ثبت دستگاه برای اعلان: داخلی",
+    "feedback": "نظرسنجی رضایت میزیتو: خارج از محدوده",
+    "support": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
 }
-READ_METHOD = re.compile(r"^(get\w*|search\w*|history|info|upcoming|badge|allSummary|chatSummary|full|userInfo|userId|name|planInfo|expandInboxRow)$")
-BLOCKED = {"session", "profile", "payment", "support", "fix"}
+EXCLUDED_EP = {  # individual endpoints without tools, and why
+    "chat.setTyping": "نشانگر «در حال نوشتن»", "inbox.setTyping": "نشانگر «در حال نوشتن»",
+    "labels.sendUsage": "آمار استفاده‌ی داخلی وب", "workspace.sendContactUsage": "آمار استفاده‌ی داخلی وب",
+    "dashboard.checkWhatsNew": "اعلان «چه خبر؟» رابط وب", "dashboard.setWhatsNewSeen": "اعلان «چه خبر؟» رابط وب",
+    "dashboard.demoGuide": "راهنمای نسخه‌ی دمو", "dashboard.notifySeen": "داخلی رابط وب",
+    "workspace.ignoreBusinessTypeModal": "پنجره‌ی نوع کسب‌وکار در وب", "workspace.updateBusinessType": "پنجره‌ی نوع کسب‌وکار در وب",
+    "workspace.updateDedicatedLogoPhoto": "لوگوی سرور اختصاصی؛ آپلود با برش تصویر",
+    "workspace.delete": "حذف میزکار: برگشت‌ناپذیر، از وب", "workspace.changeOwner": "تغییر مالک با رمز و کد: از وب",
+    "workspace.add": "ساخت میزکار جدید: از وب",
+    "customer.import": "ورود از Excel: ویزارد وب", "customer.importPrepare": "ورود از Excel: ویزارد وب",
+    "projects.import": "ورود از Excel: ویزارد وب", "projects.importPrepare": "ورود از Excel: ویزارد وب",
+    "chat.updatePhoto": "برش تصویر در مرورگر", "content.getCroppedPhoto": "برش تصویر در مرورگر",
+    "chat.fixDialogs": "تعمیر داخلی فهرست گفتگو", "tasks.checkToken": "داخلی", "tasks.print": "نمای چاپی",
+    "chat.removeTaskSnoozeMessage": "پیام یادآوری ربات؛ داخلی",
+    "notes.setColor": "با notes.update انجام می‌شود (mizito_update_note)",
+    "projectAutomation.updateOrder": "ترتیب قوانین: از وب",
+    "payment.getAllPayments": "فهرست جزئی پرداخت‌ها با فیلتر پیچیده‌ی وب؛ آمار و پرداخت‌های هر مشتری ابزار دارند",
+    "payment.getReportDetails": "جزئیات ماهانه‌ی گزارش؛ آمار کلی ابزار دارد", "payment.history": "سابقه‌ی تغییر سند مالی",
+    "support.markClientSeen": "داخلی گفتگوی پشتیبانی", "support.editFromClient": "", "support.deleteFromClient": "",
+    "support.setResponseFeedbackVote": "امتیاز به پاسخ پشتیبانی", "support.updateResponseFeedbackDetails": "امتیاز به پاسخ پشتیبانی",
+    "session.iOSAppIsAlive": "اعلان iOS",
+}
+READ_METHOD = re.compile(
+    r"^(get\w*|search\w*|history|info|upcoming|badge|allSummary|chatSummary|full|userInfo|userId|name|planInfo"
+    r"|expandInboxRow|view|whatsNew|checkWhatsNew|loadSettings|loadConstants|ganttGetTaskInfo|ganttLoadMoreTasks"
+    r"|suggestParticipants|clientOnlineHistory|getClientUnreadCount)$"
+)
+BLOCKED = {"session", "profile", "payment", "fix", "device", "feedback", "meeting"}
 
 
 def coverage(ep: str) -> tuple[str, str]:
@@ -128,7 +196,7 @@ def coverage(ep: str) -> tuple[str, str]:
         return "🟡 پیاده‌شده، تست‌نشده", via + (f" — {UNTESTED_NOTES[ep]}" if ep in UNTESTED_NOTES else "")
     if root not in BLOCKED and (root == "monitor" or READ_METHOD.match(method)):
         return "🔎 با `mizito_api_read`", "خواندنی؛ ابزار اختصاصی ندارد"
-    return "➖ پیاده‌نشده", EXCLUDED_WHY.get(root, "پیاده نشد")
+    return "➖ پیاده‌نشده", EXCLUDED_EP.get(ep) or EXCLUDED_WHY.get(root, "پیاده نشد")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -445,7 +513,7 @@ readme = [
     "# نقشه‌ی کامل میزیتو",
     "",
     f"نقشه‌ی وب‌اپ `office.mizito.ir`، ساخته‌شده در {date.today().isoformat()} از کد خود وب‌اپ (`a_.js`، حدود ۱۰ مگابایت)",
-    f"و همه‌ی قالب‌های HTML آن. نسخه‌ی کد: `cache_id` در `Config.App`. اگر میزیتو به‌روز شد، با `tools/` دوباره بسازید.",
+    "و همه‌ی قالب‌های HTML آن. نسخه‌ی کد: `cache_id` در `Config.App`. اگر میزیتو به‌روز شد، با `tools/` دوباره بسازید.",
     "",
     "| فایل | محتوا |",
     "|---|---|",

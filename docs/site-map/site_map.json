@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-28",
+ "generated": "2026-09-29",
  "states": [
   {
    "name": "ws",
@@ -13587,9 +13587,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "حضور و غیاب: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_attendance` — به انتخاب کاربر تست نشد",
+   "mcp_functions": [
+    "mizito_attendance"
+   ]
   },
   "attendance.getHistory": {
    "params": [
@@ -13602,9 +13604,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "405 (حضور دستی در این میزکار خاموش است) — `mizito_attendance_history`",
+   "mcp_functions": [
+    "mizito_attendance_history"
+   ]
   },
   "attendance.getOnlineHistory": {
    "params": [
@@ -13617,9 +13621,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_attendance_history`",
+   "mcp_functions": [
+    "mizito_attendance_history"
+   ]
   },
   "attendance.start": {
    "params": [
@@ -13632,9 +13638,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "حضور و غیاب: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_attendance` — به انتخاب کاربر تست نشد",
+   "mcp_functions": [
+    "mizito_attendance"
+   ]
   },
   "attendance.stop": {
    "params": [
@@ -13647,9 +13655,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "حضور و غیاب: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_attendance` — به انتخاب کاربر تست نشد",
+   "mcp_functions": [
+    "mizito_attendance"
+   ]
   },
   "chat.addPinMessage": {
    "params": [
@@ -13696,9 +13706,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_conversation`",
+   "mcp_functions": [
+    "mizito_manage_conversation"
+   ]
   },
   "chat.convertMentionToUnProcessed": {
    "params": [
@@ -13711,9 +13723,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_message`",
+   "mcp_functions": [
+    "mizito_manage_message"
+   ]
   },
   "chat.createDialog": {
    "params": [
@@ -13750,9 +13764,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_conversation` — حذف برگشت‌ناپذیر گروه؛ با confirm محافظت می‌شود؛ تست نشد",
+   "mcp_functions": [
+    "mizito_manage_conversation"
+   ]
   },
   "chat.deleteUser": {
    "params": [
@@ -13765,9 +13781,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_conversation`, `mizito_update_project` — روی گروه واقعی اثر دارد؛ تست نشد",
+   "mcp_functions": [
+    "mizito_manage_conversation",
+    "mizito_update_project"
+   ]
   },
   "chat.fixDialogs": {
    "params": [
@@ -13781,7 +13800,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "تعمیر داخلی فهرست گفتگو",
    "mcp_functions": []
   },
   "chat.getChatView": {
@@ -13796,11 +13815,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_get_messages`, `mizito_manage_message`, `mizito_mark_conversation_read`",
+   "mcp_note": "`messages_count`",
    "mcp_functions": [
-    "mizito_get_messages",
-    "mizito_manage_message",
-    "mizito_mark_conversation_read"
+    "messages_count"
    ]
   },
   "chat.getDialogUnDoneTasksCount": {
@@ -13814,9 +13831,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_conversation`",
+   "mcp_functions": [
+    "mizito_get_conversation"
+   ]
   },
   "chat.getDialogs": {
    "params": [
@@ -13830,9 +13849,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_list_conversations`, `mizito_start_conversation`",
+   "mcp_note": "`dialog_row`, `mizito_list_conversations`, `mizito_list_customers`, `mizito_start_conversation`",
    "mcp_functions": [
+    "dialog_row",
     "mizito_list_conversations",
+    "mizito_list_customers",
     "mizito_start_conversation"
    ]
   },
@@ -13852,8 +13873,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_api_read`",
-   "mcp_functions": []
+   "mcp_note": "`chat_full`, `dialog_title`",
+   "mcp_functions": [
+    "chat_full",
+    "dialog_title"
+   ]
   },
   "chat.getHistory": {
    "params": [
@@ -13867,10 +13891,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_get_messages`, `mizito_send_message`",
+   "mcp_note": "`_first_index_since`, `mizito_get_messages`, `send_chat`",
    "mcp_functions": [
+    "_first_index_since",
     "mizito_get_messages",
-    "mizito_send_message"
+    "send_chat"
    ]
   },
   "chat.getMessageByDate": {
@@ -13884,9 +13909,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_messages`",
+   "mcp_functions": [
+    "mizito_get_messages"
+   ]
   },
   "chat.getMessageIndex": {
    "params": [
@@ -13899,9 +13926,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_messages`",
+   "mcp_functions": [
+    "mizito_get_messages"
+   ]
   },
   "chat.getMessages": {
    "params": [
@@ -13919,9 +13948,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_manage_message`",
+   "mcp_note": "`load_message`",
    "mcp_functions": [
-    "mizito_manage_message"
+    "load_message"
    ]
   },
   "chat.getStatusDetails": {
@@ -13935,9 +13964,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_message_info`, `mizito_manage_message`",
+   "mcp_functions": [
+    "mizito_get_message_info",
+    "mizito_manage_message"
+   ]
   },
   "chat.inviteUser": {
    "params": [
@@ -13951,10 +13983,11 @@
    ],
    "indirect": false,
    "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_add_project_members`, `mizito_manage_conversation` — به همکار واقعی اعلان می‌رود؛ تست نشد",
+   "mcp_note": "`mizito_add_project_members`, `mizito_manage_conversation`, `mizito_update_project` — به همکار واقعی اعلان می‌رود؛ تست نشد",
    "mcp_functions": [
     "mizito_add_project_members",
-    "mizito_manage_conversation"
+    "mizito_manage_conversation",
+    "mizito_update_project"
    ]
   },
   "chat.loadSettings": {
@@ -13968,8 +14001,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "chat.pinDialog": {
@@ -14000,9 +14033,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_message`",
+   "mcp_functions": [
+    "mizito_manage_message"
+   ]
   },
   "chat.removePhoto": {
    "params": [
@@ -14015,9 +14050,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_conversation`",
+   "mcp_functions": [
+    "mizito_manage_conversation"
+   ]
   },
   "chat.removePinMessage": {
    "params": [
@@ -14030,9 +14067,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_message`",
+   "mcp_functions": [
+    "mizito_manage_message"
+   ]
   },
   "chat.removeSentMessage": {
    "params": [
@@ -14045,8 +14084,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_message` — حذف است؛ تست نشد",
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_message`",
    "mcp_functions": [
     "mizito_manage_message"
    ]
@@ -14062,9 +14101,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_message`",
+   "mcp_functions": [
+    "mizito_manage_message"
+   ]
   },
   "chat.removeTaskSnoozeMessage": {
    "params": [
@@ -14078,7 +14119,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "پیام یادآوری ربات؛ داخلی",
    "mcp_functions": []
   },
   "chat.saveSettings": {
@@ -14092,9 +14133,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_conversation`",
+   "mcp_functions": [
+    "mizito_manage_conversation"
+   ]
   },
   "chat.search": {
    "params": [
@@ -14142,9 +14185,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_send_message`",
+   "mcp_note": "`send_chat`",
    "mcp_functions": [
-    "mizito_send_message"
+    "send_chat"
    ]
   },
   "chat.setAdmin": {
@@ -14158,9 +14201,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_conversation` — روی گروه واقعی اثر دارد؛ تست نشد",
+   "mcp_functions": [
+    "mizito_manage_conversation"
+   ]
   },
   "chat.setTyping": {
    "params": [
@@ -14174,7 +14219,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "نشانگر «در حال نوشتن»",
    "mcp_functions": []
   },
   "chat.toggleBookmark": {
@@ -14223,7 +14268,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "برش تصویر در مرورگر",
    "mcp_functions": []
   },
   "chat.updateSentMessage": {
@@ -14246,8 +14291,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_message` — فقط برای پیام دیده‌نشده؛ مسیر موفق تست نشد",
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_message`",
    "mcp_functions": [
     "mizito_manage_message"
    ]
@@ -14264,9 +14309,10 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_manage_conversation`",
+   "mcp_note": "`mizito_manage_conversation`, `mizito_update_project`",
    "mcp_functions": [
-    "mizito_manage_conversation"
+    "mizito_manage_conversation",
+    "mizito_update_project"
    ]
   },
   "content.getCroppedPhoto": {
@@ -14295,9 +14341,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`_download_url`",
+   "mcp_functions": [
+    "_download_url"
+   ]
   },
   "customer.add": {
    "params": [
@@ -14311,7 +14359,7 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 حتی با payload دقیق فرم وب (CRM در پلن نیست) — `mizito_create_customer`",
+   "mcp_note": "400 (CRM در پلن نیست) — `mizito_create_customer`",
    "mcp_functions": [
     "mizito_create_customer"
    ]
@@ -14327,9 +14375,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_customer`",
+   "mcp_functions": [
+    "mizito_get_customer"
+   ]
   },
   "customer.import": {
    "params": [
@@ -14343,7 +14393,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM: پلن حساب تست شامل آن نبود",
+   "mcp_note": "ورود از Excel: ویزارد وب",
    "mcp_functions": []
   },
   "customer.importPrepare": {
@@ -14358,7 +14408,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM: پلن حساب تست شامل آن نبود",
+   "mcp_note": "ورود از Excel: ویزارد وب",
    "mcp_functions": []
   },
   "customer.suggestParticipants": {
@@ -14372,8 +14422,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM: پلن حساب تست شامل آن نبود",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "customer.update": {
@@ -14387,9 +14437,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM: پلن حساب تست شامل آن نبود",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_update_customer`",
+   "mcp_functions": [
+    "mizito_update_customer"
+   ]
   },
   "customer.updateLabel": {
    "params": [
@@ -14402,9 +14454,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM: پلن حساب تست شامل آن نبود",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_update_customer`",
+   "mcp_functions": [
+    "mizito_update_customer"
+   ]
   },
   "dashboard.acceptInviteRequest": {
    "params": [
@@ -14417,9 +14471,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_respond_workspace_invitation` — دعوتی در حساب تست نبود",
+   "mcp_functions": [
+    "mizito_respond_workspace_invitation"
+   ]
   },
   "dashboard.cancelInviteRequest": {
    "params": [
@@ -14432,9 +14488,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_respond_workspace_invitation` — دعوتی در حساب تست نبود",
+   "mcp_functions": [
+    "mizito_respond_workspace_invitation"
+   ]
   },
   "dashboard.checkWhatsNew": {
    "params": [
@@ -14447,8 +14505,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "dashboard.demoGuide": {
@@ -14463,7 +14521,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "راهنمای نسخه‌ی دمو",
    "mcp_functions": []
   },
   "dashboard.getAllBadges": {
@@ -14477,9 +14535,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_workspace_info`",
+   "mcp_functions": [
+    "mizito_workspace_info"
+   ]
   },
   "dashboard.getAllSummary": {
    "params": [
@@ -14528,9 +14588,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_workspace_info`",
+   "mcp_functions": [
+    "mizito_workspace_info"
+   ]
   },
   "dashboard.notifySeen": {
    "params": [
@@ -14544,7 +14606,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "داخلی رابط وب",
    "mcp_functions": []
   },
   "dashboard.setWhatsNewSeen": {
@@ -14559,7 +14621,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "اعلان «چه خبر؟» رابط وب",
    "mcp_functions": []
   },
   "dashboard.whatsNew": {
@@ -14573,8 +14635,8 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "deal.add": {
@@ -14588,9 +14650,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM فروش: پلن حساب تست شامل آن نبود",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_deal`",
+   "mcp_functions": [
+    "mizito_save_deal"
+   ]
   },
   "deal.getAll": {
    "params": [
@@ -14604,8 +14668,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 (فروش در پلن نیست)",
-   "mcp_functions": []
+   "mcp_note": "400 (فروش در پلن نیست) — `mizito_list_deals`",
+   "mcp_functions": [
+    "mizito_list_deals"
+   ]
   },
   "deal.getCustomerDeals": {
    "params": [
@@ -14618,9 +14684,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_customer`",
+   "mcp_functions": [
+    "mizito_get_customer"
+   ]
   },
   "deal.getReportStatistics": {
    "params": [
@@ -14634,8 +14702,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 (فروش در پلن نیست)",
-   "mcp_functions": []
+   "mcp_note": "400 (فروش در پلن نیست) — `mizito_list_deals`",
+   "mcp_functions": [
+    "mizito_list_deals"
+   ]
   },
   "deal.history": {
    "params": [
@@ -14663,9 +14733,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_deal`",
+   "mcp_functions": [
+    "mizito_save_deal"
+   ]
   },
   "deal.update": {
    "params": [
@@ -14678,9 +14750,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "CRM فروش: پلن حساب تست شامل آن نبود",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_deal`",
+   "mcp_functions": [
+    "mizito_save_deal"
+   ]
   },
   "device.register": {
    "params": [
@@ -14694,7 +14768,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ثبت دستگاه برای اعلان: خارج از محدوده",
+   "mcp_note": "ثبت دستگاه برای اعلان: داخلی",
    "mcp_functions": []
   },
   "feedback.checkRequireParticipant": {
@@ -14709,7 +14783,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "بازخورد به میزیتو: خارج از محدوده",
+   "mcp_note": "نظرسنجی رضایت میزیتو: خارج از محدوده",
    "mcp_functions": []
   },
   "feedback.sendFeedback": {
@@ -14732,7 +14806,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "بازخورد به میزیتو: خارج از محدوده",
+   "mcp_note": "نظرسنجی رضایت میزیتو: خارج از محدوده",
    "mcp_functions": []
   },
   "fix.changeUser.changeChatGroups": {
@@ -14746,9 +14820,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_transfer_member_work`",
+   "mcp_functions": [
+    "mizito_admin_transfer_member_work"
+   ]
   },
   "fix.changeUser.changeCustomers": {
    "params": [
@@ -14761,9 +14837,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_transfer_member_work`",
+   "mcp_functions": [
+    "mizito_admin_transfer_member_work"
+   ]
   },
   "fix.changeUser.changeTasks": {
    "params": [
@@ -14776,9 +14854,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_transfer_member_work`",
+   "mcp_functions": [
+    "mizito_admin_transfer_member_work"
+   ]
   },
   "fix.changeUser.history": {
    "params": [
@@ -14791,9 +14871,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_transfer_member_work`",
+   "mcp_functions": [
+    "mizito_admin_transfer_member_work"
+   ]
   },
   "fix.chatGroups.getAll": {
    "params": [
@@ -14806,9 +14888,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.chatGroups.getMembers": {
    "params": [
@@ -14821,9 +14905,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.chatGroups.grantAccess": {
    "params": [
@@ -14845,9 +14931,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_grant_access`",
+   "mcp_functions": [
+    "mizito_admin_grant_access"
+   ]
   },
   "fix.customer.getAll": {
    "params": [
@@ -14860,9 +14948,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.customer.getMembers": {
    "params": [
@@ -14875,9 +14965,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.customer.grantAccess": {
    "params": [
@@ -14899,9 +14991,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_grant_access`",
+   "mcp_functions": [
+    "mizito_admin_grant_access"
+   ]
   },
   "fix.projects.getAll": {
    "params": [
@@ -14914,9 +15008,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 برای غیرمدیر — `mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.projects.getMembers": {
    "params": [
@@ -14929,9 +15025,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_list_all`",
+   "mcp_functions": [
+    "mizito_admin_list_all"
+   ]
   },
   "fix.projects.grantAccess": {
    "params": [
@@ -14957,9 +15055,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ابزار اصلاح دسترسی مدیر: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_grant_access`, `mizito_admin_restore_project`",
+   "mcp_functions": [
+    "mizito_admin_grant_access",
+    "mizito_admin_restore_project"
+   ]
   },
   "formRequestTemplate.add": {
    "params": [
@@ -14972,9 +15073,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "formRequestTemplate.getAll": {
    "params": [
@@ -14987,9 +15090,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "formRequestTemplate.getAllForms": {
    "params": [
@@ -15002,9 +15107,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_list_request_forms`",
+   "mcp_functions": [
+    "mizito_list_request_forms"
+   ]
   },
   "formRequestTemplate.getHistory": {
    "params": [
@@ -15032,9 +15139,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "formRequestTemplate.newComment": {
    "params": [
@@ -15047,9 +15156,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_comment_on_task`",
+   "mcp_functions": [
+    "mizito_comment_on_task"
+   ]
   },
   "formRequestTemplate.remove": {
    "params": [
@@ -15062,9 +15173,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "formRequestTemplate.save": {
    "params": [
@@ -15077,9 +15190,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "formRequestTemplate.submit": {
    "params": [
@@ -15092,9 +15207,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_submit_request_form`",
+   "mcp_functions": [
+    "mizito_submit_request_form"
+   ]
   },
   "formRequestTemplate.view": {
    "params": [
@@ -15107,9 +15224,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "فرم‌های درخواست (پلن سازمانی): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_list_request_forms`, `mizito_submit_request_form`",
+   "mcp_functions": [
+    "mizito_list_request_forms",
+    "mizito_submit_request_form"
+   ]
   },
   "inbox.archive": {
    "params": [
@@ -15139,9 +15259,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_letter`",
+   "mcp_functions": [
+    "mizito_manage_letter"
+   ]
   },
   "inbox.badge": {
    "params": [
@@ -15169,9 +15291,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_letter`",
+   "mcp_functions": [
+    "mizito_manage_letter"
+   ]
   },
   "inbox.changeMessageLabels": {
    "params": [
@@ -15184,8 +15308,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_letter` — تست نشد",
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_letter`",
    "mcp_functions": [
     "mizito_manage_letter"
    ]
@@ -15201,9 +15325,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_letter`",
+   "mcp_functions": [
+    "mizito_manage_letter"
+   ]
   },
   "inbox.expandInboxRow": {
    "params": [
@@ -15232,9 +15358,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_get_letter_thread`, `mizito_reply_letter`",
+   "mcp_note": "`_locate`, `mizito_get_letter_thread`, `mizito_manage_letter`, `mizito_reply_letter`",
    "mcp_functions": [
+    "_locate",
     "mizito_get_letter_thread",
+    "mizito_manage_letter",
     "mizito_reply_letter"
    ]
   },
@@ -15266,9 +15394,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (دبیرخانه در پلن نیست) — `mizito_register_letter`",
+   "mcp_functions": [
+    "mizito_register_letter"
+   ]
   },
   "inbox.getMessageDialogs": {
    "params": [
@@ -15281,9 +15411,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_letter_thread`",
+   "mcp_functions": [
+    "mizito_get_letter_thread"
+   ]
   },
   "inbox.getMessageLabels": {
    "params": [
@@ -15296,9 +15428,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_letter_thread`",
+   "mcp_functions": [
+    "mizito_get_letter_thread"
+   ]
   },
   "inbox.getSeenDetails": {
    "params": [
@@ -15311,9 +15445,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_letter_thread`",
+   "mcp_functions": [
+    "mizito_get_letter_thread"
+   ]
   },
   "inbox.registerInLetter": {
    "params": [
@@ -15326,9 +15462,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_register_letter`",
+   "mcp_functions": [
+    "mizito_register_letter"
+   ]
   },
   "inbox.registerOutLetter": {
    "params": [
@@ -15341,9 +15479,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_register_letter`",
+   "mcp_functions": [
+    "mizito_register_letter"
+   ]
   },
   "inbox.seen": {
    "params": [
@@ -15392,7 +15532,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "نشانگر «در حال نوشتن»",
    "mcp_functions": []
   },
   "inbox.toggleBookmark": {
@@ -15440,9 +15580,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_letter`",
+   "mcp_functions": [
+    "mizito_manage_letter"
+   ]
   },
   "labels.add": {
    "params": [
@@ -15472,9 +15614,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_label`",
+   "mcp_functions": [
+    "mizito_manage_label"
+   ]
   },
   "labels.getAll": {
    "params": [
@@ -15488,10 +15632,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_create_label`, `mizito_list_labels`",
+   "mcp_note": "`mizito_create_label`, `mizito_list_labels`, `mizito_manage_label`",
    "mcp_functions": [
     "mizito_create_label",
-    "mizito_list_labels"
+    "mizito_list_labels",
+    "mizito_manage_label"
    ]
   },
   "labels.history": {
@@ -15505,9 +15650,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_label`",
+   "mcp_functions": [
+    "mizito_manage_label"
+   ]
   },
   "labels.save": {
    "params": [
@@ -15520,9 +15667,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_label`",
+   "mcp_functions": [
+    "mizito_manage_label"
+   ]
   },
   "labels.sendUsage": {
    "params": [
@@ -15536,7 +15685,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "آمار استفاده‌ی داخلی وب",
    "mcp_functions": []
   },
   "meeting.broadcastMeetingMessage": {
@@ -15599,8 +15748,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
+   "mcp_status": "➖ پیاده‌نشده",
+   "mcp_note": "تماس تصویری (WebRTC): از طریق MCP قابل استفاده نیست",
    "mcp_functions": []
   },
   "meeting.ping": {
@@ -15648,9 +15797,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_create_minute`",
+   "mcp_functions": [
+    "mizito_create_minute"
+   ]
   },
   "minute.getTemplates": {
    "params": [
@@ -15663,9 +15814,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_list_templates`",
+   "mcp_functions": [
+    "mizito_list_templates"
+   ]
   },
   "minute.history": {
    "params": [
@@ -15678,9 +15831,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_minute`",
+   "mcp_functions": [
+    "mizito_get_minute"
+   ]
   },
   "minute.setMinuteAsTemplate": {
    "params": [
@@ -15693,9 +15848,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه (به‌صورت پیوست چت ساخته می‌شود): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_minute`",
+   "mcp_functions": [
+    "mizito_manage_minute"
+   ]
   },
   "minute.update": {
    "params": [
@@ -15708,9 +15865,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه (به‌صورت پیوست چت ساخته می‌شود): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_minute`",
+   "mcp_functions": [
+    "mizito_manage_minute"
+   ]
   },
   "minuteAdvanced.deleteComment": {
    "params": [
@@ -15723,9 +15882,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.editComment": {
    "params": [
@@ -15738,9 +15899,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.get": {
    "params": [
@@ -15753,9 +15916,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_minute`, `mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_get_minute",
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.getComments": {
    "params": [
@@ -15768,9 +15934,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_minute`",
+   "mcp_functions": [
+    "mizito_get_minute"
+   ]
   },
   "minuteAdvanced.getSmsHistory": {
    "params": [
@@ -15783,9 +15951,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_minute`",
+   "mcp_functions": [
+    "mizito_get_minute"
+   ]
   },
   "minuteAdvanced.getTemplates": {
    "params": [
@@ -15798,9 +15968,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_list_templates`",
+   "mcp_functions": [
+    "mizito_list_templates"
+   ]
   },
   "minuteAdvanced.newComment": {
    "params": [
@@ -15813,9 +15985,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.sendDraft": {
    "params": [
@@ -15828,9 +16002,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.sendForSign": {
    "params": [
@@ -15843,9 +16019,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.sendSms": {
    "params": [
@@ -15858,9 +16036,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.setMinuteAsTemplate": {
    "params": [
@@ -15873,9 +16053,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.sign": {
    "params": [
@@ -15888,9 +16070,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "minuteAdvanced.update": {
    "params": [
@@ -15903,9 +16087,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "صورتجلسه‌ی پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_advanced_minute`",
+   "mcp_functions": [
+    "mizito_manage_advanced_minute"
+   ]
   },
   "monitor.attendanceUserHistory": {
    "params": [
@@ -15918,9 +16104,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_attendance_history`",
+   "mcp_functions": [
+    "mizito_attendance_history"
+   ]
   },
   "monitor.attendanceUserOnlineHistory": {
    "params": [
@@ -15933,9 +16121,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_attendance_history`",
+   "mcp_functions": [
+    "mizito_attendance_history"
+   ]
   },
   "monitor.chart.chatMessages": {
    "params": [
@@ -15953,9 +16143,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.customers": {
    "params": [
@@ -15973,9 +16165,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.getPast30DoneTasksPercents": {
    "params": [
@@ -15993,9 +16187,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.inboxMessages": {
    "params": [
@@ -16013,9 +16209,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.notes": {
    "params": [
@@ -16033,9 +16231,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.tasksAssigned": {
    "params": [
@@ -16049,9 +16249,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.tasksCreated": {
    "params": [
@@ -16069,9 +16271,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.chart.tasksDone": {
    "params": [
@@ -16089,9 +16293,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.customers": {
    "params": [
@@ -16104,9 +16310,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.minutes": {
    "params": [
@@ -16119,9 +16327,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.project": {
    "params": [
@@ -16135,8 +16345,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 (دسترسی مدیر/پلن)",
-   "mcp_functions": []
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.projectsSummary": {
    "params": [
@@ -16149,9 +16361,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.user": {
    "params": [
@@ -16164,9 +16378,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "monitor.workspace": {
    "params": [
@@ -16180,8 +16396,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 (دسترسی مدیر/پلن)",
-   "mcp_functions": []
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "notes.archiveNote": {
    "params": [
@@ -16236,8 +16454,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_note` — حذف است؛ تست نشد",
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_note`",
    "mcp_functions": [
     "mizito_manage_note"
    ]
@@ -16289,7 +16507,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "با notes.update انجام می‌شود (mizito_update_note)",
    "mcp_functions": []
   },
   "notes.setLabels": {
@@ -16303,9 +16521,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_update_note`",
+   "mcp_functions": [
+    "mizito_update_note"
+   ]
   },
   "notes.update": {
    "params": [
@@ -16352,9 +16572,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_payment`",
+   "mcp_functions": [
+    "mizito_save_payment"
+   ]
   },
   "payment.checkDiscountCode": {
    "params": [
@@ -16368,7 +16590,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "payment.createUpgradeInvoice": {
@@ -16383,7 +16605,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "payment.getAllPayments": {
@@ -16398,7 +16620,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "فهرست جزئی پرداخت‌ها با فیلتر پیچیده‌ی وب؛ آمار و پرداخت‌های هر مشتری ابزار دارند",
    "mcp_functions": []
   },
   "payment.getCustomerPayments": {
@@ -16412,9 +16634,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_customer`",
+   "mcp_functions": [
+    "mizito_get_customer"
+   ]
   },
   "payment.getInvoice": {
    "params": [
@@ -16432,7 +16656,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "payment.getReportDetails": {
@@ -16447,7 +16671,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "جزئیات ماهانه‌ی گزارش؛ آمار کلی ابزار دارد",
    "mcp_functions": []
   },
   "payment.getReportStatistics": {
@@ -16461,9 +16685,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_payment_report`",
+   "mcp_functions": [
+    "mizito_payment_report"
+   ]
   },
   "payment.history": {
    "params": [
@@ -16477,7 +16703,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "سابقه‌ی تغییر سند مالی",
    "mcp_functions": []
   },
   "payment.info": {
@@ -16491,9 +16717,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_payment`",
+   "mcp_functions": [
+    "mizito_save_payment"
+   ]
   },
   "payment.requestTrial": {
    "params": [
@@ -16507,7 +16735,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "payment.setWantToPay": {
@@ -16522,7 +16750,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "payment.update": {
@@ -16536,9 +16764,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_save_payment`",
+   "mcp_functions": [
+    "mizito_save_payment"
+   ]
   },
   "payment.uploadLastWaitingInvoicePayment": {
    "params": [
@@ -16552,7 +16782,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "مالی و پرداخت: عمداً کنار گذاشته شد",
+   "mcp_note": "خرید و پرداخت اشتراک: عمداً ابزار ندارد (تراکنش مالی)",
    "mcp_functions": []
   },
   "polling.getTemplates": {
@@ -16566,9 +16796,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_list_templates`",
+   "mcp_functions": [
+    "mizito_list_templates"
+   ]
   },
   "polling.printPollingResults": {
    "params": [
@@ -16581,9 +16813,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (گزارش چاپی، پلن سازمانی) — `mizito_get_poll_results`",
+   "mcp_functions": [
+    "mizito_get_poll_results"
+   ]
   },
   "polling.retractVote": {
    "params": [
@@ -16596,9 +16830,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_poll_action`",
+   "mcp_functions": [
+    "mizito_poll_action"
+   ]
   },
   "polling.setPollingAsTemplate": {
    "params": [
@@ -16611,9 +16847,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_poll_action`",
+   "mcp_functions": [
+    "mizito_poll_action"
+   ]
   },
   "polling.setPollingVote": {
    "params": [
@@ -16626,9 +16864,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_poll_action`",
+   "mcp_functions": [
+    "mizito_poll_action"
+   ]
   },
   "polling.stopPolling": {
    "params": [
@@ -16641,9 +16881,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "نظرسنجی (پیوست چت، نیازمند ادمین گروه): پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_poll_action`",
+   "mcp_functions": [
+    "mizito_poll_action"
+   ]
   },
   "profile.activate": {
    "params": [
@@ -16657,7 +16899,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.changePhoneNumber": {
@@ -16673,7 +16915,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.getEmailInfo": {
@@ -16688,7 +16930,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.getProfileSecurity": {
@@ -16703,7 +16945,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.removePhoto": {
@@ -16718,7 +16960,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.setDontDisturbUntil": {
@@ -16732,9 +16974,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_set_presence` — به انتخاب کاربر تست نشد",
+   "mcp_functions": [
+    "mizito_set_presence"
+   ]
   },
   "profile.setOnlineStatus": {
    "params": [
@@ -16747,9 +16991,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_set_presence` — به انتخاب کاربر تست نشد",
+   "mcp_functions": [
+    "mizito_set_presence"
+   ]
   },
   "profile.setUserOptions": {
    "params": [
@@ -16763,7 +17009,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.setWallpaper": {
@@ -16778,7 +17024,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.terminateOneSession": {
@@ -16793,7 +17039,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.terminateOtherSessions": {
@@ -16808,7 +17054,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.turnTwoStepLoginOff": {
@@ -16824,7 +17070,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.update": {
@@ -16839,7 +17085,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.updateEmail": {
@@ -16854,7 +17100,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.updatePassword": {
@@ -16869,7 +17115,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.updatePhoto": {
@@ -16884,7 +17130,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "profile.verifyEmail": {
@@ -16899,7 +17145,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "رمز، شماره، نشست‌ها و امنیت حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "رمز، شماره، ایمیل، ورود دومرحله‌ای و نشست‌ها: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "projectAutomation.add": {
@@ -16913,9 +17159,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.buttonClicked": {
    "params": [
@@ -16928,9 +17176,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_run_task_automation`",
+   "mcp_functions": [
+    "mizito_run_task_automation"
+   ]
   },
   "projectAutomation.customParam.add": {
    "params": [
@@ -16947,9 +17197,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.customParam.delete": {
    "params": [
@@ -16962,9 +17214,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.customParam.getAll": {
    "params": [
@@ -16977,9 +17231,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "projectAutomation.customParam.getHistory": {
    "params": [
@@ -17007,9 +17263,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "projectAutomation.customParam.restore": {
    "params": [
@@ -17022,9 +17280,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.customParam.update": {
    "params": [
@@ -17037,9 +17297,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.customParam.updateOrder": {
    "params": [
@@ -17052,9 +17314,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.delete": {
    "params": [
@@ -17067,9 +17331,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.getAll": {
    "params": [
@@ -17082,9 +17348,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (پروژه‌ی پیشرفته با اتوماسیون لازم است) — `mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "projectAutomation.getHistory": {
    "params": [
@@ -17112,9 +17380,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "projectAutomation.loadConstants": {
    "params": [
@@ -17127,9 +17397,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "projectAutomation.update": {
    "params": [
@@ -17142,9 +17414,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomation.updateOrder": {
    "params": [
@@ -17158,7 +17432,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "اتوماسیون پروژه‌های پیشرفته: پیاده نشد",
+   "mcp_note": "ترتیب قوانین: از وب",
    "mcp_functions": []
   },
   "projectAutomationWorkflow.add": {
@@ -17172,9 +17446,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گردش‌کار اتوماسیون: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomationWorkflow.delete": {
    "params": [
@@ -17187,9 +17463,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گردش‌کار اتوماسیون: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projectAutomationWorkflow.getAll": {
    "params": [
@@ -17202,9 +17480,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (پروژه‌ی پیشرفته لازم است) — `mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "projectAutomationWorkflow.getOne": {
    "params": [
@@ -17232,9 +17512,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "projectAutomationWorkflow.update": {
    "params": [
@@ -17247,9 +17529,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گردش‌کار اتوماسیون: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_automation`",
+   "mcp_functions": [
+    "mizito_manage_project_automation"
+   ]
   },
   "projects.activateAdvancedFeatures": {
    "params": [
@@ -17262,9 +17546,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 روی پلن آزمایشی (پروژه‌ی پیشرفته) — `mizito_set_project_advanced`",
+   "mcp_functions": [
+    "mizito_set_project_advanced"
+   ]
   },
   "projects.add": {
    "params": [
@@ -17315,9 +17601,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_projects_tab`",
+   "mcp_note": "`projects_tab`",
    "mcp_functions": [
-    "_projects_tab"
+    "projects_tab"
    ]
   },
   "projects.archive": {
@@ -17332,8 +17618,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "405 برای غیرمدیر (در وب «حذف با امکان بازگشت» است)",
-   "mcp_functions": []
+   "mcp_note": "405 برای غیرمدیر — `mizito_admin_archive_category`",
+   "mcp_functions": [
+    "mizito_admin_archive_category"
+   ]
   },
   "projects.chatSummary": {
    "params": [
@@ -17350,9 +17638,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_project`",
+   "mcp_functions": [
+    "mizito_get_project"
+   ]
   },
   "projects.clone": {
    "params": [
@@ -17365,9 +17655,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 روی پلن آزمایشی — `mizito_clone_project`",
+   "mcp_functions": [
+    "mizito_clone_project"
+   ]
   },
   "projects.full": {
    "params": [
@@ -17381,13 +17673,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_project_overview`, `mizito_add_project_board`, `mizito_add_project_members`, `mizito_archive_project`, `mizito_update_project`",
+   "mcp_note": "`project_full`",
    "mcp_functions": [
-    "_project_overview",
-    "mizito_add_project_board",
-    "mizito_add_project_members",
-    "mizito_archive_project",
-    "mizito_update_project"
+    "project_full"
    ]
   },
   "projects.ganttGroupAddTasks": {
@@ -17401,9 +17689,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttLoadMoreTasks": {
    "params": [
@@ -17416,9 +17706,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`_gantt`",
+   "mcp_functions": [
+    "_gantt"
+   ]
   },
   "projects.ganttMoveTask": {
    "params": [
@@ -17431,9 +17723,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttRemoveGroup": {
    "params": [
@@ -17446,9 +17740,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttRemoveTask": {
    "params": [
@@ -17461,9 +17757,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttSaveGroup": {
    "params": [
@@ -17476,9 +17774,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttSetTaskTimeline": {
    "params": [
@@ -17491,9 +17791,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttTaskLinkAdd": {
    "params": [
@@ -17506,9 +17808,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.ganttTaskLinkRemove": {
    "params": [
@@ -17521,9 +17825,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_gantt`",
+   "mcp_functions": [
+    "mizito_manage_gantt"
+   ]
   },
   "projects.get": {
    "params": [
@@ -17566,9 +17872,11 @@
     }
    ],
    "indirect": true,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (پروژه‌ی پیشرفته با گانت لازم است) — `_gantt`",
+   "mcp_functions": [
+    "_gantt"
+   ]
   },
   "projects.getList": {
    "params": [
@@ -17582,10 +17890,11 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_refresh_task_tokens`, `mizito_archive_project`, `mizito_create_project`, `mizito_list_projects`",
+   "mcp_note": "`_refresh_task_tokens`, `mizito_archive_project`, `mizito_clone_project`, `mizito_create_project`, `mizito_list_projects`",
    "mcp_functions": [
     "_refresh_task_tokens",
     "mizito_archive_project",
+    "mizito_clone_project",
     "mizito_create_project",
     "mizito_list_projects"
    ]
@@ -17631,9 +17940,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_list_project_files`",
+   "mcp_functions": [
+    "mizito_list_project_files"
+   ]
   },
   "projects.getProjectTaskFileIds": {
    "params": [
@@ -17706,7 +18017,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "ورود از Excel: ویزارد وب",
    "mcp_functions": []
   },
   "projects.importPrepare": {
@@ -17721,7 +18032,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "ورود از Excel: ویزارد وب",
    "mcp_functions": []
   },
   "projects.monitor.chart.getPast30DoneTasksPercents": {
@@ -17735,9 +18046,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "projects.monitor.project": {
    "params": [
@@ -17751,8 +18064,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "400 (دسترسی مدیر/پلن)",
-   "mcp_functions": []
+   "mcp_note": "400 (دسترسی مدیر/پلن) — `mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "projects.monitor.projectsSummary": {
    "params": [
@@ -17765,9 +18080,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_reports`",
+   "mcp_functions": [
+    "mizito_reports"
+   ]
   },
   "projects.removeKanbanBoard": {
    "params": [
@@ -17780,9 +18097,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_project_board`",
+   "mcp_functions": [
+    "mizito_manage_project_board"
+   ]
   },
   "projects.restoreArchivedTasks": {
    "params": [
@@ -17795,9 +18114,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_restore_project`",
+   "mcp_functions": [
+    "mizito_admin_restore_project"
+   ]
   },
   "projects.save": {
    "params": [
@@ -17832,9 +18153,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_set_project_advanced`",
+   "mcp_functions": [
+    "mizito_set_project_advanced"
+   ]
   },
   "projects.setChatProjectColor": {
    "params": [
@@ -17847,9 +18170,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_update_project`",
+   "mcp_functions": [
+    "mizito_update_project"
+   ]
   },
   "projects.setChatProjectLabels": {
    "params": [
@@ -17862,9 +18187,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_update_project`",
+   "mcp_functions": [
+    "mizito_update_project"
+   ]
   },
   "projects.setKanbanBoardOrder": {
    "params": [
@@ -17877,9 +18204,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_project_board`",
+   "mcp_functions": [
+    "mizito_manage_project_board"
+   ]
   },
   "projects.undoArchive": {
    "params": [
@@ -17893,8 +18222,10 @@
    ],
    "indirect": false,
    "mcp_status": "⛔ رد شد",
-   "mcp_note": "405 برای غیرمدیر",
-   "mcp_functions": []
+   "mcp_note": "405 برای غیرمدیر — `mizito_admin_archive_category`",
+   "mcp_functions": [
+    "mizito_admin_archive_category"
+   ]
   },
   "projects.updateKanbanBoard": {
    "params": [
@@ -17907,9 +18238,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_project_board`",
+   "mcp_functions": [
+    "mizito_manage_project_board"
+   ]
   },
   "session.createSSO": {
    "params": [
@@ -17923,7 +18256,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.deleteAccount": {
@@ -17938,7 +18271,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.deleteAccountRequest": {
@@ -17953,7 +18286,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.forgot": {
@@ -17968,7 +18301,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.forgotReset": {
@@ -17983,7 +18316,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.iOSAppIsAlive": {
@@ -17998,7 +18331,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "اعلان iOS",
    "mcp_functions": []
   },
   "session.logout": {
@@ -18013,7 +18346,7 @@
    ],
    "indirect": true,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.register": {
@@ -18041,7 +18374,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.userInfo": {
@@ -18056,7 +18389,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "session.username": {
@@ -18071,7 +18404,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "ورود، ثبت‌نام و حذف حساب: عمداً کنار گذاشته شد",
+   "mcp_note": "ورود، ثبت‌نام، خروج و حذف حساب: عمداً ابزار ندارد (امنیت حساب)",
    "mcp_functions": []
   },
   "support.clientOnlineHistory": {
@@ -18085,9 +18418,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_support_history`",
+   "mcp_functions": [
+    "mizito_support_history"
+   ]
   },
   "support.closeResponse": {
    "params": [
@@ -18101,7 +18436,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.deleteFromClient": {
@@ -18115,9 +18450,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_contact_support`",
+   "mcp_functions": [
+    "mizito_contact_support"
+   ]
   },
   "support.deleteResponse": {
    "params": [
@@ -18131,7 +18468,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.deleteResponseFeedback": {
@@ -18146,7 +18483,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.editFromClient": {
@@ -18160,9 +18497,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_contact_support`",
+   "mcp_functions": [
+    "mizito_contact_support"
+   ]
   },
   "support.editResponse": {
    "params": [
@@ -18176,7 +18515,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.extendDialogLock": {
@@ -18191,7 +18530,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.getAdminHistory": {
@@ -18205,8 +18544,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getClientUnreadCount": {
@@ -18220,9 +18559,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_support_history`",
+   "mcp_functions": [
+    "mizito_support_history"
+   ]
   },
   "support.getDialog": {
    "params": [
@@ -18235,8 +18576,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getDialogs": {
@@ -18250,8 +18591,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getFeedbackMonitor": {
@@ -18265,8 +18606,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getFeedbackMonitorOpenCount": {
@@ -18280,8 +18621,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getFeedbackMonitorStats": {
@@ -18295,8 +18636,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getFeedbackReviewCase": {
@@ -18310,8 +18651,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.getSupportInfo": {
@@ -18329,8 +18670,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.lockDialog": {
@@ -18345,7 +18686,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.markClientSeen": {
@@ -18360,7 +18701,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "داخلی گفتگوی پشتیبانی",
    "mcp_functions": []
   },
   "support.markSupportSeen": {
@@ -18375,7 +18716,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.reopenFeedbackReview": {
@@ -18390,7 +18731,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.resolveFeedbackReview": {
@@ -18405,7 +18746,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.searchContent": {
@@ -18419,8 +18760,8 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_status": "🔎 با `mizito_api_read`",
+   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
    "mcp_functions": []
   },
   "support.sendFromClient": {
@@ -18434,9 +18775,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_contact_support` — به پشتیبانی واقعی میزیتو می‌رود؛ تست نشد",
+   "mcp_functions": [
+    "mizito_contact_support"
+   ]
   },
   "support.sendResponse": {
    "params": [
@@ -18450,7 +18793,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.sendSuggestion": {
@@ -18464,9 +18807,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_contact_support` — به پشتیبانی واقعی میزیتو می‌رود؛ تست نشد",
+   "mcp_functions": [
+    "mizito_contact_support"
+   ]
   },
   "support.setResponseFeedbackVote": {
    "params": [
@@ -18480,7 +18825,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "امتیاز به پاسخ پشتیبانی",
    "mcp_functions": []
   },
   "support.setTyping": {
@@ -18495,7 +18840,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.setTypingAdmin": {
@@ -18510,7 +18855,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.startFeedbackReview": {
@@ -18525,7 +18870,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.unlockDialog": {
@@ -18540,7 +18885,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "پنل کارکنان پشتیبانی میزیتو: فقط برای کارمندان شرکت",
    "mcp_functions": []
   },
   "support.updateResponseFeedbackDetails": {
@@ -18555,7 +18900,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "گفتگوی پشتیبانی خود میزیتو: خارج از محدوده",
+   "mcp_note": "امتیاز به پاسخ پشتیبانی",
    "mcp_functions": []
   },
   "taskTemplates.add": {
@@ -18569,9 +18914,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "قالب وظیفه: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_task_template`",
+   "mcp_functions": [
+    "mizito_manage_task_template"
+   ]
   },
   "taskTemplates.getAll": {
    "params": [
@@ -18584,9 +18931,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (پروژه‌ی پیشرفته لازم است) — `mizito_get_project_automation`",
+   "mcp_functions": [
+    "mizito_get_project_automation"
+   ]
   },
   "taskTemplates.getAllTemplates": {
    "params": [
@@ -18599,9 +18948,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 (پروژه‌ی پیشرفته لازم است) — `_template`, `mizito_list_templates`",
+   "mcp_functions": [
+    "_template",
+    "mizito_list_templates"
+   ]
   },
   "taskTemplates.remove": {
    "params": [
@@ -18614,9 +18966,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "قالب وظیفه: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_task_template`",
+   "mcp_functions": [
+    "mizito_manage_task_template"
+   ]
   },
   "taskTemplates.save": {
    "params": [
@@ -18629,9 +18983,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "قالب وظیفه: پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_task_template`",
+   "mcp_functions": [
+    "mizito_manage_task_template"
+   ]
   },
   "tasks.add": {
    "params": [
@@ -18650,8 +19006,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_create_task`",
+   "mcp_note": "`mizito_create_minute`, `mizito_create_task`",
    "mcp_functions": [
+    "mizito_create_minute",
     "mizito_create_task"
    ]
   },
@@ -18682,7 +19039,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "داخلی",
    "mcp_functions": []
   },
   "tasks.createShareLink": {
@@ -18696,9 +19053,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_task`",
+   "mcp_functions": [
+    "mizito_manage_task"
+   ]
   },
   "tasks.deleteComment": {
    "params": [
@@ -18711,9 +19070,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_task_comment`",
+   "mcp_functions": [
+    "mizito_manage_task_comment"
+   ]
   },
   "tasks.editComment": {
    "params": [
@@ -18726,9 +19087,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_task_comment`",
+   "mcp_functions": [
+    "mizito_manage_task_comment"
+   ]
   },
   "tasks.ganttGetTaskInfo": {
    "params": [
@@ -18741,9 +19104,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "tasks.get": {
    "params": [
@@ -18757,9 +19122,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_load_task`",
+   "mcp_note": "`load_task`",
    "mcp_functions": [
-    "_load_task"
+    "load_task"
    ]
   },
   "tasks.getAll": {
@@ -18806,9 +19171,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_get_task_extras`",
+   "mcp_functions": [
+    "mizito_get_task_extras"
+   ]
   },
   "tasks.history": {
    "params": [
@@ -18866,7 +19233,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "نمای چاپی",
    "mcp_functions": []
   },
   "tasks.removeFromBoard": {
@@ -18880,9 +19247,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_task`",
+   "mcp_functions": [
+    "mizito_manage_task"
+   ]
   },
   "tasks.removeFromTracking": {
    "params": [
@@ -18895,9 +19264,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_manage_task`",
+   "mcp_functions": [
+    "mizito_manage_task"
+   ]
   },
   "tasks.removeTask": {
    "params": [
@@ -18911,7 +19282,7 @@
    ],
    "indirect": false,
    "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_task` — حذف است؛ تست نشد",
+   "mcp_note": "`mizito_manage_task` — برگشت‌پذیر (سطل زباله)؛ تست نشد",
    "mcp_functions": [
     "mizito_manage_task"
    ]
@@ -18928,7 +19299,7 @@
    ],
    "indirect": false,
    "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
-   "mcp_note": "`mizito_manage_task` — برگرداندن حذف؛ تست نشد",
+   "mcp_note": "`mizito_manage_task` — تست نشد",
    "mcp_functions": [
     "mizito_manage_task"
    ]
@@ -18945,9 +19316,9 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_save_task`",
+   "mcp_note": "`save_task`",
    "mcp_functions": [
-    "_save_task"
+    "save_task"
    ]
   },
   "tasks.setChecklistCheckedValue": {
@@ -18996,9 +19367,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_move_task_to_board`",
+   "mcp_functions": [
+    "mizito_move_task_to_board"
+   ]
   },
   "tasks.setKanbanWeightSort": {
    "params": [
@@ -19011,9 +19384,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_manage_project_board`",
+   "mcp_functions": [
+    "mizito_manage_project_board"
+   ]
   },
   "tasks.snooze": {
    "params": [
@@ -19062,11 +19437,13 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`_refresh_task_tokens`, `mizito_calendar`, `mizito_list_tasks`",
+   "mcp_note": "`_gantt`, `_refresh_task_tokens`, `mizito_calendar`, `mizito_list_tasks`, `mizito_move_task_to_board`",
    "mcp_functions": [
+    "_gantt",
     "_refresh_task_tokens",
     "mizito_calendar",
-    "mizito_list_tasks"
+    "mizito_list_tasks",
+    "mizito_move_task_to_board"
    ]
   },
   "tasks.updateDeadline": {
@@ -19115,7 +19492,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "ساخت میزکار جدید: از وب",
    "mcp_functions": []
   },
   "workspace.changeOwner": {
@@ -19130,7 +19507,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "تغییر مالک با رمز و کد: از وب",
    "mcp_functions": []
   },
   "workspace.changeRole": {
@@ -19144,9 +19521,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_manage_member`",
+   "mcp_functions": [
+    "mizito_admin_manage_member"
+   ]
   },
   "workspace.delete": {
    "params": [
@@ -19160,7 +19539,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "حذف میزکار: برگشت‌ناپذیر، از وب",
    "mcp_functions": []
   },
   "workspace.getPermissions": {
@@ -19174,9 +19553,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "⛔ رد شد",
+   "mcp_note": "400 برای غیرمدیر — `mizito_admin_workspace_settings`, `mizito_workspace_info`",
+   "mcp_functions": [
+    "mizito_admin_workspace_settings",
+    "mizito_workspace_info"
+   ]
   },
   "workspace.getPlans": {
    "params": [
@@ -19205,9 +19587,10 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_list_users`",
+   "mcp_note": "`mizito_list_users`, `users`",
    "mcp_functions": [
-    "mizito_list_users"
+    "mizito_list_users",
+    "users"
    ]
   },
   "workspace.ignoreBusinessTypeModal": {
@@ -19222,7 +19605,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "پنجره‌ی نوع کسب‌وکار در وب",
    "mcp_functions": []
   },
   "workspace.inviteMember": {
@@ -19253,9 +19636,12 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "🔎 با `mizito_api_read`",
-   "mcp_note": "خواندنی؛ ابزار اختصاصی ندارد",
-   "mcp_functions": []
+   "mcp_status": "✅ تست‌شده",
+   "mcp_note": "`mizito_admin_workspace_settings`, `mizito_workspace_info`",
+   "mcp_functions": [
+    "mizito_admin_workspace_settings",
+    "mizito_workspace_info"
+   ]
   },
   "workspace.planInfo": {
    "params": [
@@ -19269,8 +19655,10 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_api_read`",
-   "mcp_functions": []
+   "mcp_note": "`mizito_workspace_info`",
+   "mcp_functions": [
+    "mizito_workspace_info"
+   ]
   },
   "workspace.reJoinMember": {
    "params": [
@@ -19283,9 +19671,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_manage_member`",
+   "mcp_functions": [
+    "mizito_admin_manage_member"
+   ]
   },
   "workspace.removeMember": {
    "params": [
@@ -19298,9 +19688,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_manage_member`",
+   "mcp_functions": [
+    "mizito_admin_manage_member"
+   ]
   },
   "workspace.sendContactUsage": {
    "params": [
@@ -19322,7 +19714,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "آمار استفاده‌ی داخلی وب",
    "mcp_functions": []
   },
   "workspace.setWorkspaceSettings": {
@@ -19336,9 +19728,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_workspace_settings`",
+   "mcp_functions": [
+    "mizito_admin_workspace_settings"
+   ]
   },
   "workspace.switch": {
    "params": [
@@ -19351,9 +19745,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`switch_workspace` — حساب تست فقط یک میزکار داشت",
+   "mcp_functions": [
+    "switch_workspace"
+   ]
   },
   "workspace.updateBusinessType": {
    "params": [
@@ -19367,7 +19763,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "پنجره‌ی نوع کسب‌وکار در وب",
    "mcp_functions": []
   },
   "workspace.updateDedicatedLogoPhoto": {
@@ -19382,7 +19778,7 @@
    ],
    "indirect": false,
    "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
+   "mcp_note": "لوگوی سرور اختصاصی؛ آپلود با برش تصویر",
    "mcp_functions": []
   },
   "workspace.updateTitle": {
@@ -19396,9 +19792,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_workspace_settings`",
+   "mcp_functions": [
+    "mizito_admin_workspace_settings"
+   ]
   },
   "workspace.updateUserPermission": {
    "params": [
@@ -19411,9 +19809,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_manage_member`",
+   "mcp_functions": [
+    "mizito_admin_manage_member"
+   ]
   },
   "workspace.updateWorkspaceRoleName": {
    "params": [
@@ -19426,9 +19826,11 @@
     }
    ],
    "indirect": false,
-   "mcp_status": "➖ پیاده‌نشده",
-   "mcp_note": "پیاده نشد",
-   "mcp_functions": []
+   "mcp_status": "🟡 پیاده‌شده، تست‌نشده",
+   "mcp_note": "`mizito_admin_manage_member`",
+   "mcp_functions": [
+    "mizito_admin_manage_member"
+   ]
   },
   "workspace.userId": {
    "params": [
@@ -19442,9 +19844,10 @@
    ],
    "indirect": false,
    "mcp_status": "✅ تست‌شده",
-   "mcp_note": "`mizito_whoami`",
+   "mcp_note": "`_me`, `my_user_id`",
    "mcp_functions": [
-    "mizito_whoami"
+    "_me",
+    "my_user_id"
    ]
   }
  },
