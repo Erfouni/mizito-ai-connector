@@ -45,8 +45,6 @@ sudo bash deploy/install.sh
 
 بقیه‌ی کارها خودکار است: نصب پایتون و بسته‌ها، ساخت سرویسی که همیشه روشن می‌ماند، گرفتن گواهی HTTPS رایگان، تنظیم nginx و ساختن آدرس مخفی. در پایان **آدرس connector** شما نمایش داده می‌شود.
 
-> اگر این ریپو خصوصی باشد، صاحبش باید در GitHub به شما دسترسی بدهد. راه دیگر این است که فایل ZIP ریپو را دانلود کنید و روی سرور باز کنید.
-
 ### گام ۳: وصل کردن به ChatGPT یا Claude
 
 - **ChatGPT:**
@@ -155,8 +153,6 @@ Everything else is automatic:
 - A secret connector address.
 
 At the end the script prints **your connector address**.
-
-> If this repository is private, its owner must give you access on GitHub. You can also download the repository ZIP and unpack it on the server.
 
 ### Step 3: connect ChatGPT or Claude
 

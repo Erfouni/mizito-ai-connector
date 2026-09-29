@@ -28,7 +28,7 @@ Claude.ai / ChatGPT ──HTTPS (MCP)──► سرور شما (این پروژ�
 ## ۱. نصب و تنظیم ورود
 
 ```bash
-git clone <آدرس این ریپو> mizito-ai-connector
+git clone https://github.com/Erfouni/mizito-ai-connector.git
 cd mizito-ai-connector
 uv sync
 cp .env.example .env
@@ -78,7 +78,7 @@ claude mcp add mizito -- uv --directory /path/to/mizito-ai-connector run server.
 sudo apt install -y python3-venv nginx certbot
 sudo useradd --system --home-dir /opt/mizito-mcp --no-create-home --shell /usr/sbin/nologin mizito-mcp
 
-# کد: کپی کنید (scp) یا با دسترسی به ریپو clone کنید
+# کد: git clone https://github.com/Erfouni/mizito-ai-connector.git و بعد داخل پوشه‌اش:
 sudo mkdir -p /opt/mizito-mcp && sudo cp -r server.py mizito_client.py mizito deploy/requirements.txt .env.example /opt/mizito-mcp/
 cd /opt/mizito-mcp
 sudo python3 -m venv .venv
