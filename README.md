@@ -222,3 +222,9 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 | `deploy/install.sh` | نصب و به‌روزرسانی خودکار روی سرور Ubuntu یا Debian |
 | `deploy/` | سرویس systemd، نمونه‌ی nginx و `requirements.txt` با hash |
 | `API_MAP.md` | نقشه‌ی API داخلی میزیتو |
+
+## لایسنس · License
+
+[MIT](LICENSE): استفاده، تغییر و انتشار آزاد است، به شرط اینکه متن لایسنس همراهش بماند. این پروژه غیررسمی است و به شرکت میزیتو وابسته نیست.
+
+*MIT licensed. This is an unofficial project, not affiliated with Mizito.*
