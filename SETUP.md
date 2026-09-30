@@ -26,7 +26,7 @@
    اگر Chrome اجازه‌ی Paste نداد، اول `allow pasting` را تایپ کنید و Enter بزنید.
 4. توکن در کلیپ‌بورد کپی شد. آن را مثل رمز عبور نگه دارید.
 
-> اگر در مرورگر از میزیتو خارج شوید (Logout)، توکن باطل می‌شود. به‌جای توکن می‌توانید نام کاربری و رمز هم بدهید.
+> اگر در مرورگر از میزیتو خارج شوید (Logout)، توکن ممکن است باطل شود. به‌جای توکن می‌توانید نام کاربری و رمز هم بدهید. این روش ماندگارتر است، چون سرور هر وقت لازم شد خودش دوباره وارد میزیتو می‌شود؛ فقط با ورود دومرحله‌ای کار نمی‌کند.
 
 ### گام ۲: نصب روی سرور (یک دستور)
 
@@ -64,6 +64,7 @@ sudo bash deploy/install.sh
 | دیدن دوباره‌ی آدرس connector | `sudo bash deploy/install.sh url` |
 | به‌روزرسانی به نسخه‌ی جدید | `git pull && sudo bash deploy/install.sh`، بعد در ChatGPT روی connector دکمه‌ی **Refresh** را بزنید |
 | عوض کردن توکن | `sudo nano /opt/mizito-mcp/.env`، مقدار `MIZITO_TOKEN` را عوض کنید، بعد `sudo systemctl restart mizito-mcp` |
+| اتصال دائمی (ورود خودکار) | در همان فایل `MIZITO_USERNAME` و `MIZITO_PASSWORD` را هم پر کنید و سرویس را ری‌استارت کنید. وقتی توکن باطل شود، سرور خودش با رمز وارد می‌شود |
 | فقط خواندن (بدون ارسال یا تغییر) | در همان فایل بگذارید `MIZITO_ENABLE_WRITE=0` و سرویس را ری‌استارت کنید |
 | ابزارهای CRM یا مدیریت میزکار | `MIZITO_ENABLE_CRM=1` یا `MIZITO_ENABLE_ADMIN=1`، فقط اگر پلن و نقش شما اجازه می‌دهد؛ بعد سرویس را ری‌استارت کنید |
 | دیدن لاگ سرویس | `sudo journalctl -u mizito-mcp -f` |
@@ -128,7 +129,7 @@ This guide connects your own Mizito account to **ChatGPT** and **Claude**. You o
 3. Type `copy(localStorage.token)` and press Enter. If Chrome blocks pasting, type `allow pasting` first.
 4. The token is now in your clipboard. Treat it like a password.
 
-> Logging out of Mizito in that browser invalidates the token. You can also use your username and password instead.
+> Logging out of Mizito in that browser may invalidate the token. You can also use your username and password instead. That lasts longer, because the server logs in again by itself whenever needed. It does not work with two-step login.
 
 ### Step 2: install on the server (one command)
 
@@ -173,6 +174,7 @@ Then try it: "What are my Mizito tasks for today?"
 | Show the connector address again | `sudo bash deploy/install.sh url` |
 | Update to a new version | `git pull && sudo bash deploy/install.sh`, then click **Refresh** on the connector in ChatGPT |
 | Change the token | `sudo nano /opt/mizito-mcp/.env`, replace `MIZITO_TOKEN`, then `sudo systemctl restart mizito-mcp` |
+| Stay connected for good (auto login) | Also fill in `MIZITO_USERNAME` and `MIZITO_PASSWORD` in that file and restart. When the token expires, the server logs in with the password |
 | Read-only mode (no sending or changes) | Set `MIZITO_ENABLE_WRITE=0` in that file and restart |
 | CRM or workspace-admin tools | Set `MIZITO_ENABLE_CRM=1` or `MIZITO_ENABLE_ADMIN=1` if your plan and role allow it, then restart |
 | Service log | `sudo journalctl -u mizito-mcp -f` |
