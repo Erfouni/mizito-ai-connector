@@ -1,5 +1,7 @@
 # Mizito AI Connector
 
+[![tests](https://github.com/Erfouni/mizito-ai-connector/actions/workflows/tests.yml/badge.svg)](https://github.com/Erfouni/mizito-ai-connector/actions/workflows/tests.yml) [![release](https://img.shields.io/github/v/release/Erfouni/mizito-ai-connector)](https://github.com/Erfouni/mizito-ai-connector/releases) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 یک MCP Server که حساب [میزیتو](https://mizito.ir) را به **Claude** و **ChatGPT** وصل می‌کند. با آن می‌توانید در چت این‌ها را بخوانید و تحلیل کنید: گفتگوها، پروژه‌ها، وظایف، تقویم، نامه‌ها، صورتجلسه‌ها، نظرسنجی‌ها، یادداشت‌ها و فایل‌ها (PDF، Word، Excel، عکس). اگر بخواهید، تقریباً هر کاری را هم که در وب میزیتو ممکن است انجام می‌دهد: پیام، نامه و پاراف؛ وظیفه با تکرار و یادآوری؛ کانبان و گانت؛ صورتجلسه و نظرسنجی؛ آپلود و پیوست فایل؛ CRM و مدیریت میزکار. **۱۰۵ ابزار** با توضیح کامل دارد که فهرستشان در [docs/TOOLS.md](docs/TOOLS.md) است.
 
 *An MCP server that connects a Mizito workspace to Claude and ChatGPT (read, analyse, and optionally act).*
@@ -219,6 +221,7 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 | `docs/TOOLS.md` | راهنمای کامل ابزارها؛ با `tools/build_tools_doc.py` ساخته می‌شود |
 | `docs/site-map/` | نقشه‌ی کامل وب‌اپ میزیتو و وضعیت هر endpoint در MCP |
 | `SETUP.md` | راهنمای ساده‌ی دوزبانه (فارسی و انگلیسی) برای وصل کردن حساب خودتان |
+| `CHANGELOG.md` | تغییرات هر نسخه |
 | `deploy/install.sh` | نصب و به‌روزرسانی خودکار روی سرور Ubuntu یا Debian |
 | `deploy/` | سرویس systemd، نمونه‌ی nginx و `requirements.txt` با hash |
 | `API_MAP.md` | نقشه‌ی API داخلی میزیتو |

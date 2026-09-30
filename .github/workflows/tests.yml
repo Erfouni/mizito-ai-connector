@@ -1,0 +1,33 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Offline tests (Jalali dates, repeat rules, reading Word/Excel/PowerPoint)
+        run: uv run python tests/test_offline.py
+      - name: Every tool loads with a valid schema
+        env:
+          MIZITO_ENABLE_WRITE: "1"
+          MIZITO_ENABLE_CRM: "1"
+          MIZITO_ENABLE_ADMIN: "1"
+        run: >-
+          uv run python -c "import asyncio, runpy;
+          tools = asyncio.run(runpy.run_path('server.py', run_name='ci')['mcp'].list_tools());
+          assert len(tools) >= 100, len(tools); print(len(tools), 'tools load')"
+      - name: Lint
+        run: uvx ruff check --select F,E9 mizito server.py mizito_client.py check_login.py check.py tools tests
+      - name: Installer script
+        run: shellcheck -s bash deploy/install.sh
