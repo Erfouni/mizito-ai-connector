@@ -85,7 +85,9 @@ if [ "${1:-}" = "url" ]; then
     exit 0
 fi
 command -v apt-get >/dev/null 2>&1 || die "This installer supports Ubuntu / Debian (apt-get)."
-[ -f "$REPO_DIR/server.py" ] && [ -d "$REPO_DIR/mizito" ] || die "Run it from the downloaded repository: sudo bash deploy/install.sh"
+if [ ! -f "$REPO_DIR/server.py" ] || [ ! -d "$REPO_DIR/mizito" ]; then
+    die "Run it from the downloaded repository: sudo bash deploy/install.sh"
+fi
 
 cat <<'EOF'
 
@@ -113,7 +115,9 @@ else
     if [ -z "${MIZITO_TOKEN:-}" ]; then
         ask MIZITO_USERNAME "Mizito username (mobile number or email)"
         ask_secret MIZITO_PASSWORD "Mizito password"
-        [ -n "${MIZITO_USERNAME:-}" ] && [ -n "${MIZITO_PASSWORD:-}" ] || die "Give a token, or a username and password"
+        if [ -z "${MIZITO_USERNAME:-}" ] || [ -z "${MIZITO_PASSWORD:-}" ]; then
+            die "Give a token, or a username and password"
+        fi
     fi
 fi
 
