@@ -1,5 +1,25 @@
 # تغییرات · Changelog
 
+## v0.3.0 · ۱۱ مهر ۱۴۰۵ (2026-10-03)
+
+<div dir="rtl">
+
+- **نصب با یک دستور، بدون git:** `curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/install.sh | bash`. کد را خودش دانلود می‌کند، فقط دامنه و نام کاربری و رمز میزیتو را می‌پرسد و IP سرور را برای ساختن رکورد DNS نشان می‌دهد. راهنمای [SETUP.md](SETUP.md) کوتاه شد: سه قدم.
+- **ورود ساده‌تر:** دیگر لازم نیست توکن را از Console مرورگر دربیاورید. نام کاربری و رمز همان لحظه بررسی می‌شوند و اگر اشتباه باشند دوباره پرسیده می‌شوند. برای ورود دومرحله‌ای، کد پیامکی را می‌پرسد. رقم‌های فارسی و شماره‌ی موبایل را مثل فرم ورود وب میزیتو می‌پذیرد.
+- **دستور `mizito-connector`** روی سرور، از هر پوشه‌ای: `url`، `status`، `login`، `update` و `logs`.
+- **پیام روشن برای خطاهای رایج:** دامنه‌ای که به سرور اشاره نمی‌کند، ابر نارنجی Cloudflare، پورت 80 یا 443 اشغال، و نبودن دسترسی به Let's Encrypt یا pypi.org. اگر pypi.org باز نباشد، بسته‌ها از mirrorهای ایرانی نصب می‌شوند و hash هر فایل باز هم بررسی می‌شود.
+- **ایمنی ورود خودکار:** اگر میزیتو رمز ذخیره‌شده را رد کند، سرور تا ری‌استارت بعدی دوباره امتحانش نمی‌کند، تا حساب قفل نشود و پیامک پشت سر هم نیاید.
+- دستور قدیمی `sudo bash deploy/install.sh` همچنان کار می‌کند.
+
+</div>
+
+- **One-command install, no git:** `curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/install.sh | bash`. It downloads the code itself, asks only for the domain and the Mizito username and password, and shows the server's IP for the DNS record. [SETUP.md](SETUP.md) is now three short steps.
+- **Easier login:** no more copying a token from the browser console. The username and password are checked right away and asked again when wrong; with two-step login it asks for the SMS code. Persian digits and mobile numbers are read the way Mizito's web login form reads them.
+- **The `mizito-connector` command** on the server, from any folder: `url`, `status`, `login`, `update` and `logs`.
+- **Clear messages for the usual problems:** a domain that does not point to the server, Cloudflare's orange cloud, ports 80/443 in use, and no access to Let's Encrypt or pypi.org. When pypi.org is blocked, packages come from Iranian mirrors, still checked against their hashes.
+- **Safer automatic login:** when Mizito refuses the saved password, the server does not retry it until the next restart, so the account is not locked and no SMS codes pile up.
+- The old `sudo bash deploy/install.sh` still works.
+
 ## v0.2.0 · ۸ مهر ۱۴۰۵ (2026-09-30)
 
 <div dir="rtl">

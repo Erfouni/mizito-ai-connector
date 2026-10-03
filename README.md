@@ -6,7 +6,11 @@
 
 *An MCP server that connects a Mizito workspace to Claude and ChatGPT (read, analyse, and optionally act).*
 
-> **راه‌اندازی سریع · Quick setup: [SETUP.md](SETUP.md).** برای راه‌اندازی فقط یک دامنه و حساب میزیتوی خودتان لازم است و نصب روی سرور یک دستور است: `sudo bash deploy/install.sh`. *All you need is a domain and your Mizito account; the server install is one command.*
+> **راه‌اندازی سریع · Quick setup: [SETUP.md](SETUP.md).** فقط یک دامنه و حساب میزیتوی خودتان لازم است. نصب روی سرور Ubuntu یک دستور است و فقط دامنه و نام کاربری و رمز میزیتو را می‌پرسد. *All you need is a domain and your Mizito account. On an Ubuntu server, one command installs everything:*
+>
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/install.sh | bash
+> ```
 
 > این پروژه از API داخلی وب‌اپ میزیتو استفاده می‌کند که رسمی نیست. ممکن است با به‌روزرسانی میزیتو تغییر کند. جزئیات API در [API_MAP.md](API_MAP.md) آمده است.
 
@@ -72,7 +76,13 @@ claude mcp add mizito -- uv --directory /path/to/mizito-ai-connector run server.
 
 ## ۳. استقرار روی سرور (برای Claude.ai و ChatGPT)
 
-**ساده‌ترین راه:** دستور `sudo bash deploy/install.sh` همه‌ی مراحل زیر را خودکار انجام می‌دهد. فقط دامنه و توکن میزیتو را می‌پرسد. برای به‌روزرسانی، `git pull` و بعد همین دستور را اجرا کنید. راهنمای قدم‌به‌قدم در [SETUP.md](SETUP.md) است. مراحل دستی زیر برای کسی است که می‌خواهد همه‌چیز را خودش تنظیم کند.
+**ساده‌ترین راه:** این یک دستور همه‌ی مراحل زیر را خودکار انجام می‌دهد و فقط دامنه و نام کاربری و رمز میزیتو را می‌پرسد:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/install.sh | bash
+```
+
+بعد از نصب، دستور `mizito-connector` روی سرور هست: `url` (آدرس connector)، `status`، `login` (ورود دوباره)، `update` و `logs`. راهنمای قدم‌به‌قدم در [SETUP.md](SETUP.md) است. مراحل دستی زیر برای کسی است که می‌خواهد همه‌چیز را خودش تنظیم کند.
 
 روی Ubuntu. اول یک رکورد DNS از نوع A برای دامنه‌تان بسازید، مثلاً `mcp.example.com`، که به IP سرور اشاره کند.
 
@@ -200,8 +210,8 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 
 | مشکل | علت و راه‌حل |
 |---|---|
-| `No credentials` | `MIZITO_TOKEN` در `.env` خالی است |
-| `401` / `token expired` | توکن باطل شده است. توکن تازه بگذارید و سرویس را ری‌استارت کنید |
+| `No credentials` | در `.env` نه توکن هست و نه نام کاربری و رمز. روی سرور: `mizito-connector login` |
+| `401` / `Mizito login failed` | ورود منقضی شده یا رمز عوض شده است. روی سرور بزنید `mizito-connector login`؛ روی کامپیوتر خودتان، `.env` را درست کنید |
 | ChatGPT ابزار جدید را نمی‌بیند | روی connector **Refresh** بزنید و یک چت جدید باز کنید |
 | ساخت وظیفه رد می‌شود | `project_id` لازم است، و مسئولان باید عضو همان پروژه باشند |
 | اسمی پیدا نمی‌شود | بعضی اسم‌ها با «ي» و «ك» عربی نوشته شده‌اند |
@@ -216,13 +226,13 @@ ChatGPT فهرست ابزارها را فقط موقع ساخت connector می�
 | `mizito/` | ابزارها، هر بخش در یک فایل (`chat.py`، `tasks.py`، `letters.py`، ...). بخش مشترک در `app.py` است: کلاینت، تاریخ شمسی، ثبت ابزار و راهنمای کلی |
 | `mizito_client.py` | کلاینت API میزیتو: ورود، فراخوانی، آپلود و دانلود فایل، و حذف اسرار از خروجی |
 | `check.py` | تست سریع اتصال و ابزارهای خواندنی |
-| `check_login.py` | امتحان ورود با نام کاربری و رمز؛ چیزی ذخیره نمی‌کند |
+| `check_login.py` | امتحان ورود با نام کاربری و رمز (و کد پیامکی ورود دومرحله‌ای)؛ چیزی ذخیره نمی‌کند. نصب‌کننده با `--save` از آن برای ذخیره‌ی ورود روی سرور استفاده می‌کند |
 | `tests/test_offline.py` | تست بدون اینترنت: تاریخ شمسی، تکرار وظیفه، و خواندن Word، Excel و PowerPoint |
 | `docs/TOOLS.md` | راهنمای کامل ابزارها؛ با `tools/build_tools_doc.py` ساخته می‌شود |
 | `docs/site-map/` | نقشه‌ی کامل وب‌اپ میزیتو و وضعیت هر endpoint در MCP |
 | `SETUP.md` | راهنمای ساده‌ی دوزبانه (فارسی و انگلیسی) برای وصل کردن حساب خودتان |
 | `CHANGELOG.md` | تغییرات هر نسخه |
-| `deploy/install.sh` | نصب و به‌روزرسانی خودکار روی سرور Ubuntu یا Debian |
+| `install.sh` | نصب و به‌روزرسانی با یک دستور روی سرور Ubuntu یا Debian؛ بعد از نصب، همان دستور `mizito-connector` است |
 | `deploy/` | سرویس systemd، نمونه‌ی nginx و `requirements.txt` با hash |
 | `API_MAP.md` | نقشه‌ی API داخلی میزیتو |
 
