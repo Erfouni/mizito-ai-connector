@@ -5,7 +5,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mizito.app import ToolError, call, check, client, compact, tool
+from mizito.app import ADVANCED_PLAN_FEATURES, ToolError, call, check, client, compact, tool
 from mizito_client import MizitoError
 
 
@@ -16,8 +16,10 @@ def _me() -> dict:
 @tool("من کیستم / میزکار فعال")
 def mizito_whoami() -> dict:
     """The logged-in Mizito user, the active workspace (میزکار) and the other workspaces this account can
-    switch to, plus role and creation rights. Call it first when you need your own user id (for example to
-    assign a task to yourself) or to check whether you are a workspace admin or guest."""
+    switch to, plus role, creation rights and the plan type: "basic" (پایه) or "advanced" (پیشرفته); advanced
+    projects, Gantt, task templates, automation and advanced minutes exist only on the advanced plan. Call it
+    first when you need your own user id (for example to assign a task to yourself) or to check whether you
+    are a workspace admin or guest."""
     info = _me()
     return compact({
         "user_id": info.get("uid"),
@@ -32,6 +34,7 @@ def mizito_whoami() -> dict:
         "can_create_projects": info.get("access_project_creator"),
         "can_create_groups": info.get("access_chat_group_creator"),
         "can_create_crm_files": info.get("access_crm_creator"),
+        "plan_type": "advanced" if info.get("is_enterprise_plan") is True else "basic",
         "plan_is_trial": info.get("plan_is_trial"),
         "plan_remaining_days": info.get("remain_days"),
     })
@@ -84,6 +87,8 @@ def mizito_workspace_info() -> dict:
         "workspace_id": info.get("wid"),
         "name": client.call("workspace.name", {}),
         "plan": compact({
+            "type": "advanced (پیشرفته)" if info.get("is_enterprise_plan") is True else "basic (پایه)",
+            "advanced_plan_only": ADVANCED_PLAN_FEATURES,
             "trial": info.get("plan_is_trial"), "demo": info.get("plan_is_demo"),
             "remaining_days": info.get("remain_days"), "upgrade_needed": info.get("plan_upgrade_need"),
             "storage_almost_full": info.get("plan_storage_almost_full"),

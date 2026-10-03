@@ -72,7 +72,7 @@ Safety
   rights. Tell the user that instead of retrying with guessed parameters.
 """
 
-mcp = MCPServer("mizito", title="Mizito", instructions=INSTRUCTIONS, version="0.3.0")
+mcp = MCPServer("mizito", title="Mizito", instructions=INSTRUCTIONS, version="0.3.1")
 
 # --- tool registration ---------------------------------------------------------------------------
 
@@ -306,11 +306,32 @@ def html_text(text: str) -> str:
     return html.escape(text or "").replace("\n", "<br>")
 
 
+# The web app offers these only when workspace.userId says is_enterprise_plan, which it labels the
+# "advanced" plan (پیشرفته) as opposed to "basic" (پایه); a workspace admin role does not change that.
+ADVANCED_PLAN_FEATURES = ("advanced projects (پروژه‌ی پیشرفته), Gantt, task templates, automation and request forms, "
+                          "advanced minutes and monitoring reports")
+
+
+def plan_type() -> str | None:
+    """The workspace plan as the web app names it: "advanced" (پیشرفته) or "basic" (پایه)."""
+    try:
+        me = client.call("workspace.userId", {}) or {}
+    except MizitoError:
+        return None
+    return "advanced" if me.get("is_enterprise_plan") is True else "basic"
+
+
 def call(endpoint: str, payload: dict | None = None, hint: str | None = None) -> Any:
     """client.call, with a hint about the likely cause (plan, admin rights...) appended to HTTP errors."""
     try:
         return client.call(endpoint, payload or {})
     except MizitoError as exc:
+        plan = plan_type() if hint and "plan" in hint else None
+        if plan == "basic":
+            hint += (f". This workspace has the basic plan (پایه): the Mizito web app offers {ADVANCED_PLAN_FEATURES} "
+                     "only on the advanced plan (پیشرفته), and admin rights do not change that")
+        elif plan == "advanced":
+            hint += ". This workspace has the advanced plan (پیشرفته), so admin rights or a switched-off feature are more likely"
         raise ToolError(f"{exc}. {hint}" if hint else str(exc)) from exc
 
 

@@ -63,8 +63,10 @@
 
 ```text
 The logged-in Mizito user, the active workspace (میزکار) and the other workspaces this account can
-    switch to, plus role and creation rights. Call it first when you need your own user id (for example to
-    assign a task to yourself) or to check whether you are a workspace admin or guest.
+    switch to, plus role, creation rights and the plan type: "basic" (پایه) or "advanced" (پیشرفته); advanced
+    projects, Gantt, task templates, automation and advanced minutes exist only on the advanced plan. Call it
+    first when you need your own user id (for example to assign a task to yourself) or to check whether you
+    are a workspace admin or guest.
 ```
 
 بدون پارامتر.

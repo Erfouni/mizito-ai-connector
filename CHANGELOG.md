@@ -1,5 +1,15 @@
 # تغییرات · Changelog
 
+## v0.3.1 · ۱۱ مهر ۱۴۰۵ (2026-10-03)
+
+<div dir="rtl">
+
+- **نوع پلن میزکار:** `mizito_whoami` و `mizito_workspace_info` حالا می‌گویند پلن «پایه» است یا «پیشرفته». پروژه‌ی پیشرفته، گانت، الگوی وظیفه، اتوماسیون و صورتجلسه‌ی پیشرفته فقط در پلن پیشرفته هستند. خطای این قابلیت‌ها هم علت را دقیق می‌گوید: میزکار پلن پایه دارد و دسترسی مدیر این را عوض نمی‌کند.
+
+</div>
+
+- **Workspace plan type:** `mizito_whoami` and `mizito_workspace_info` now say whether the plan is basic (پایه) or advanced (پیشرفته). Advanced projects, Gantt, task templates, automation and advanced minutes exist only on the advanced plan, and their errors now state the cause: the workspace has the basic plan, and admin rights do not change that.
+
 ## v0.3.0 · ۱۱ مهر ۱۴۰۵ (2026-10-03)
 
 <div dir="rtl">
