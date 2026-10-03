@@ -74,7 +74,10 @@ def log_in(user: str, password: str, token: str) -> tuple[MizitoClient, bool]:
         if not token:
             raise MizitoAuthError("Give a username and password, or a token.")
         client = MizitoClient(token=token)
-        client.call("workspace.userId", {})  # MizitoAuthError (401) when the token is not valid
+        try:
+            client.call("workspace.userId", {})
+        except MizitoAuthError:  # 401
+            raise MizitoAuthError("Mizito did not accept this token.") from None
         return client, False
     client = MizitoClient(username=user, password=password)
     try:
