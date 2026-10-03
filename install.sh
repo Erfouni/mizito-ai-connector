@@ -155,7 +155,12 @@ port_owner() {  # the program listening on TCP port $1, if any
 
 public_ip() {  # this server's public IPv4 address (empty if it cannot be found)
     local url ip
-    for url in https://api.ipify.org https://icanhazip.com; do
+    # Its own address first: outgoing traffic may leave through another IP (seen on Iranian servers).
+    ip="$(ip -4 -o addr show scope global 2>/dev/null | awk '{print $4}' | cut -d/ -f1 \
+        | grep -vE '^(10|127|169\.254|192\.168|172\.(1[6-9]|2[0-9]|3[01])|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7]))\.' \
+        | head -n 1 || true)"
+    if [ -n "$ip" ]; then echo "$ip"; return 0; fi
+    for url in https://api.ipify.org https://icanhazip.com; do  # behind NAT: ask what the internet sees
         ip="$(curl -4 -fsS --max-time 6 "$url" 2>/dev/null | tr -d '[:space:]' || true)"
         if [[ "$ip" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]]; then echo "$ip"; return 0; fi
     done
