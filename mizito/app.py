@@ -72,7 +72,7 @@ Safety
   rights. Tell the user that instead of retrying with guessed parameters.
 """
 
-mcp = MCPServer("mizito", title="Mizito", instructions=INSTRUCTIONS, version="0.2.0")
+mcp = MCPServer("mizito", title="Mizito", instructions=INSTRUCTIONS, version="0.3.0")
 
 # --- tool registration ---------------------------------------------------------------------------
 

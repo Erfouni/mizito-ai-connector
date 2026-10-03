@@ -32,10 +32,41 @@ class MizitoAuthError(MizitoError):
     pass
 
 
+class MizitoCodeRequired(MizitoAuthError):
+    """Two-step login: Mizito has sent a code by SMS; log in again with it as login_code."""
+
+
 def hash_password(password: str) -> str:
     """Same scheme as the web app: md5(pw) + "|" + sha256(pw), both hex."""
     raw = password.encode("utf-8")
     return hashlib.md5(raw).hexdigest() + "|" + hashlib.sha256(raw).hexdigest()
+
+
+_ASCII_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+
+
+def to_ascii_digits(text: str) -> str:
+    """Persian and Arabic digits to 0-9, as the web login form does for the username, password and code."""
+    return text.translate(_ASCII_DIGITS)
+
+
+def login_username(username: str) -> str:
+    """The username as the web login form sends it: a mobile number typed as 9121234567 or
+    989121234567 gets its leading 0 or +."""
+    name = to_ascii_digits(username.strip())
+    if name.isdigit() and len(name) == 10:
+        return "0" + name
+    if name.isdigit() and len(name) == 12:
+        return "+" + name
+    return name
+
+
+# capi/session/create answers other than success (status 1 or 5), as the web login form reads them.
+# Status 7 means two-step login (MizitoCodeRequired); anything else is a wrong username or password.
+_LOGIN_REFUSED = {
+    6: "too many login attempts; Mizito accepts no new login for a few hours",
+    8: "too many open Mizito sessions; end some in Mizito under Profile > Security",
+}
 
 
 _BLOCK_TAGS = re.compile(r"(?i)<\s*(br|/div|/p|/li)\s*/?>")
@@ -93,6 +124,7 @@ class MizitoClient:
         self._username = username or None
         self._password = password or None
         self._login_code = login_code or None
+        self._login_refused: str | None = None
         self._lock = threading.Lock()
         self._http = httpx.Client(timeout=timeout, headers={"Accept": "application/json, text/plain, */*"})
         self._users: dict[str, str] | None = None
@@ -118,26 +150,48 @@ class MizitoClient:
     def login(self) -> dict:
         if not self.can_login:
             raise MizitoAuthError("MIZITO_USERNAME / MIZITO_PASSWORD are not set.")
-        resp = self._http.post(  # errors propagate to call(), which wraps them
-            f"{self.api_url}/capi/session/create",
-            json={
-                "username": self._username,
-                "password": hash_password(self._password),
-                "loginCode": self._login_code,
-                "regId": None,
-            },
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        # The web app treats status 1 and 5 as a successful login.
-        if data.get("status") in (1, 5) and data.get("token"):
+        try:
+            resp = self._http.post(
+                f"{self.api_url}/capi/session/create",
+                json={
+                    "username": login_username(self._username),
+                    "password": hash_password(to_ascii_digits(self._password)),
+                    "loginCode": to_ascii_digits(self._login_code) if self._login_code else None,
+                    "regId": None,
+                },
+            )
+        except httpx.HTTPError as exc:
+            raise MizitoError(f"login -> network error talking to Mizito: {exc!r}") from exc
+        try:
+            data = resp.json()
+        except ValueError:
+            data = None
+        if isinstance(data, dict) and data.get("blocked"):
+            raise MizitoAuthError("Mizito login refused: the workspace admin has restricted your access.")
+        if resp.status_code >= 400 or not isinstance(data, dict):
+            raise MizitoError(f"login -> HTTP {resp.status_code}: Mizito did not answer the login normally")
+        status = data.get("status")
+        if status in (1, 5) and data.get("token"):
             self.token = data["token"]
             self._clear_caches()
             return data
-        raise MizitoAuthError(
-            f"Login failed (status={data.get('status')!r}). "
-            "If two-step login is enabled, set MIZITO_LOGIN_CODE."
+        if status == 7 and not data.get("too_attempts"):
+            raise MizitoCodeRequired("This account uses two-step login: Mizito has sent a code by SMS.")
+        reason = _LOGIN_REFUSED.get(status) or (
+            "too many attempts; try again later" if data.get("too_attempts") else "wrong username or password"
         )
+        raise MizitoAuthError(f"Mizito login failed: {reason} (status {status!r}).")
+
+    def _relogin(self) -> None:
+        """Log in with the saved password. Once Mizito refuses it, it is not tried again until the server
+        restarts: retrying a wrong password, or a two-step login, would only lock the account or send SMS."""
+        if self._login_refused:
+            raise MizitoAuthError(self._login_refused)
+        try:
+            self.login()
+        except MizitoAuthError as exc:
+            self._login_refused = f"{exc} Log in again: run `mizito-connector login` on the server (or update .env)."
+            raise MizitoAuthError(self._login_refused) from exc
 
     # --- transport ----------------------------------------------------------
 
@@ -156,11 +210,11 @@ class MizitoClient:
                     raise MizitoAuthError(
                         "No credentials: set MIZITO_TOKEN (or MIZITO_USERNAME/MIZITO_PASSWORD) in .env"
                     )
-                self.login()
+                self._relogin()
             try:
                 resp = request()
                 if resp.status_code == 401 and self.can_login:
-                    self.login()
+                    self._relogin()
                     resp = request()
             except httpx.HTTPError as exc:
                 raise MizitoError(f"{endpoint} -> network error talking to Mizito: {exc!r}") from exc
@@ -201,7 +255,10 @@ class MizitoClient:
 
     def _decode(self, endpoint: str, resp: httpx.Response) -> Any:
         if resp.status_code == 401:
-            raise MizitoAuthError("Mizito rejected the token (401): it expired or was revoked. Update MIZITO_TOKEN.")
+            raise MizitoAuthError(
+                "Mizito rejected the saved login (401): the token expired or was revoked. "
+                "Log in again: run `mizito-connector login` on the server (or put a fresh MIZITO_TOKEN in .env)."
+            )
         if resp.status_code >= 400:
             detail = "HTML error page" if "html" in resp.headers.get("content-type", "") else resp.text[:300]
             raise MizitoError(f"{endpoint} -> HTTP {resp.status_code} ({detail}); wrong parameters or no access")

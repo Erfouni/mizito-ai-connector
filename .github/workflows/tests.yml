@@ -30,4 +30,4 @@ jobs:
       - name: Lint
         run: uvx ruff check --select F,E9 mizito server.py mizito_client.py check_login.py check.py tools tests
       - name: Installer script
-        run: shellcheck -s bash deploy/install.sh
+        run: shellcheck -s bash install.sh deploy/install.sh

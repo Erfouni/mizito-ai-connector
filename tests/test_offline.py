@@ -1,17 +1,26 @@
 """Offline checks for the helpers (no Mizito account needed): uv run python tests/test_offline.py"""
 import io
+import json
 import sys
+import tempfile
 import zipfile
 from datetime import date, timedelta
 from pathlib import Path
 
+import httpx
+from dotenv import dotenv_values
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+from check_login import save_env  # noqa: E402
 from mizito.app import (  # noqa: E402
     ToolError, alarm_options, gregorian_to_jalali, iso, jalali, jalali_to_gregorian, parse_when,
 )
 from mizito.files import extract_text  # noqa: E402
+from mizito_client import (  # noqa: E402
+    MizitoAuthError, MizitoClient, MizitoCodeRequired, hash_password, login_username, to_ascii_digits,
+)
 
 
 def test_calendar_round_trip() -> None:
@@ -92,6 +101,68 @@ def test_extract_text() -> None:
     assert extract_text("f.html", "text/html", "<p>سلام</p><br>دنیا".encode()) == ("text", "سلام\n\nدنیا")
     assert extract_text("g.jpg", "image/jpeg", b"\xff\xd8")[0] == "image"
     assert extract_text("h.bin", None, b"\x00\x01")[0] == "binary"
+
+
+def test_login() -> None:
+    assert login_username(" ۹۱۲۱۲۳۴۵۶۷ ") == "09121234567"  # as the web form: Persian digits, leading 0
+    assert login_username("989121234567") == "+989121234567"
+    assert login_username("09121234567") == "09121234567"
+    assert login_username("me@example.com") == "me@example.com"
+    assert to_ascii_digits("رمز۱۲۳٤") == "رمز1234"
+
+    logins: list[dict] = []
+    replies: list[dict] = []
+
+    def mizito(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/capi/session/create":
+            logins.append(json.loads(request.content))
+            return httpx.Response(200, json=replies.pop(0))
+        return httpx.Response(401)  # every other call: the token is not valid
+
+    def client(**kwargs) -> MizitoClient:
+        c = MizitoClient(**kwargs)
+        c._http = httpx.Client(transport=httpx.MockTransport(mizito))
+        return c
+
+    replies.append({"status": 1, "token": "t1"})
+    c = client(username="۹۱۲۱۲۳۴۵۶۷", password="pass۱۲")
+    c.login()
+    assert c.token == "t1"
+    assert logins[-1]["username"] == "09121234567" and logins[-1]["password"] == hash_password("pass12")
+
+    for reply, error in (({"status": 7}, MizitoCodeRequired), ({"status": 0}, MizitoAuthError),
+                         ({"status": 6}, MizitoAuthError), ({"status": 7, "too_attempts": True}, MizitoAuthError)):
+        replies.append(reply)
+        try:
+            client(username="me@example.com", password="x").login()
+        except MizitoAuthError as exc:
+            assert type(exc) is error, (reply, exc)
+        else:
+            raise AssertionError(f"accepted {reply}")
+
+    # A refused password is tried once, not again on every later call (that could lock the account).
+    replies.append({"status": 0})
+    before = len(logins)
+    c = client(token="old", username="me@example.com", password="wrong")
+    for _ in range(3):
+        try:
+            c.call("workspace.userId", {})
+        except MizitoAuthError:
+            continue
+        raise AssertionError("no error")
+    assert len(logins) == before + 1
+
+
+def test_save_env() -> None:
+    password = "a'b\\c ${HOME} \"q\" #x\\"  # quotes, backslashes, ${...} and # survive the round trip
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / ".env"
+        path.write_text("# comment\nMCP_PORT=8765\nMIZITO_TOKEN='old'\nMIZITO_TOKEN='twice'\n", encoding="utf-8")
+        save_env(path, {"MIZITO_TOKEN": "new", "MIZITO_PASSWORD": password})
+        text = path.read_text(encoding="utf-8")
+        assert text.startswith("# comment\nMCP_PORT=8765\n") and text.count("MIZITO_TOKEN=") == 1, text
+        values = dotenv_values(path, interpolate=False)
+        assert values == {"MCP_PORT": "8765", "MIZITO_TOKEN": "new", "MIZITO_PASSWORD": password}, values
 
 
 if __name__ == "__main__":
