@@ -45,8 +45,8 @@ curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/in
 
 ### قدم ۳: آدرس را در ChatGPT یا Claude بگذارید
 
-- **Claude:** Settings ← Connectors ← **Add custom connector** ← آدرس را بچسبانید. بخش OAuth را خالی بگذارید.
-- **ChatGPT:** Settings ← Apps & Connectors ← Advanced ← **Developer mode** را روشن کنید ← **Create** ← آدرس را بچسبانید ← Authentication: **No authentication**.
+- **در Claude:** Settings ← Connectors ← **Add custom connector** ← آدرس را بچسبانید. بخش OAuth را خالی بگذارید.
+- **در ChatGPT:** Settings ← Apps & Connectors ← Advanced ← **Developer mode** را روشن کنید ← **Create** ← آدرس را بچسبانید ← Authentication: **No authentication**.
 
 در چت، connector میزیتو را از منوی **+** روشن کنید و بپرسید: «کارهای امروزم در میزیتو چیست؟»
 
@@ -104,7 +104,7 @@ curl -fsSL https://raw.githubusercontent.com/Erfouni/mizito-ai-connector/main/in
 
 اگر فقط Claude Desktop روی کامپیوتر خودتان کافی است، سرور و دامنه لازم ندارید:
 
-1. [uv](https://docs.astral.sh/uv/getting-started/installation/) را نصب کنید و ریپو را دانلود کنید.
+1. برنامه‌ی [uv](https://docs.astral.sh/uv/getting-started/installation/) را نصب کنید و ریپو را دانلود کنید.
 2. داخل پوشه‌ی ریپو بزنید `uv sync` و `.env.example` را به `.env` کپی کنید.
 3. در `.env` نام کاربری و رمز (`MIZITO_USERNAME` و `MIZITO_PASSWORD`) یا توکن (`MIZITO_TOKEN`) را بگذارید، و `MIZITO_ENABLE_WRITE=1`.
 4. با `uv run python check.py` اتصال را امتحان کنید.
