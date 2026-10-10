@@ -1,5 +1,16 @@
 # تغییرات · Changelog
 
+## Unreleased
+
+- ساخت وظیفه بدون مسئول مشخص، از مسئول الگو یا خود کاربرِ عضو پروژه استفاده می‌کند. مسئول صریحی که عضو پروژه نیست پیش از ثبت رد می‌شود.
+- ساخت پروژه و وظیفه تنها پس از بازخوانی و بررسی نتیجه، موفقیت تأییدشده برمی‌گرداند. پاسخ ناقص، خطای بازخوانی، فیلد ذخیره‌نشده و تعداد ناقص وظایف با شناسه‌های قابل پیگیری گزارش می‌شوند؛ ساخت خودکار تکرار نمی‌شود.
+- خروجی ساخت پروژه و وظیفه در MCP ساختاریافته است. راهنمای مدل تفکیک موفقیت پروژه از وظایف و گزارش نتیجهٔ ناقص را الزام می‌کند.
+- بعد از به‌روزرسانی، اتصال ChatGPT را Refresh کنید تا توضیحات و schema جدید ابزارها دریافت شود.
+
+- Default missing task assignees to template defaults or the current project member; reject explicit nonmembers before writing.
+- Verify project visibility/membership and saved task fields/counts before reporting success. Uncertain or partial writes include recovery ids and must not be blindly retried.
+- Structured MCP creation results and explicit model instructions for partial completion. Refresh the ChatGPT connector after updating its tools.
+
 ## v0.3.1 · ۱۱ مهر ۱۴۰۵ (2026-10-03)
 
 <div dir="rtl">

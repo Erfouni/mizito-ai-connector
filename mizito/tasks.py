@@ -3,12 +3,12 @@ and the calendar (تقویم), which shows tasks at their reminder time."""
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import Field
 
 from mizito.app import (
-    REPEAT_HELP, TEHRAN, WHEN_HELP, AttachmentIds, LabelIds, ProjectId, TaskId, ToolError, alarm_options, call, check, client, compact, files_in, html_text, html_to_text, iso, jalali, load_task,
+    REPEAT_HELP, TEHRAN, WHEN_HELP, AttachmentIds, LabelIds, ProjectId, TaskId, ToolError, alarm_options, call, check, client, compact, creation_error, files_in, html_text, html_to_text, iso, jalali, load_task,
     media_attachments, names, now_jalali, project_full, remember_tasks, save_task, task_ref, task_token, tool,
 )
 from mizito_client import MizitoError
@@ -191,11 +191,11 @@ def _template(project_id: str, template_id: str) -> dict:
     raise ToolError(f"Task template {template_id!r} not found in this project (mizito_list_templates)")
 
 
-@tool("ساخت وظیفه", kind="create")
+@tool("ساخت وظیفه", kind="create", structured=True)
 def mizito_create_task(
     title: Annotated[str, Field(description="Task title.")],
-    assignee_ids: Annotated[list[str], Field(description="Who does it: member ids from mizito_list_users (mizito_whoami's user_id for yourself).")],
     project_id: Annotated[str, Field(description="Project the task belongs to (Mizito requires one), from mizito_list_projects.")],
+    assignee_ids: Annotated[list[str] | None, Field(description="Project member ids. Omit or [] to use template assignees, otherwise yourself (only if you are a project member). Never guess another person's id.")] = None,
     notes: Annotated[str, Field(description="Description (plain text).")] = "",
     deadline: Annotated[str | None, Field(description="Due date (مهلت); does NOT put the task on the calendar. " + WHEN_HELP)] = None,
     checklist: Annotated[list[str] | None, Field(description="Checklist item titles.")] = None,
@@ -214,10 +214,16 @@ def mizito_create_task(
     template_id: Annotated[str | None, Field(description="Start from a task template of the project (mizito_list_templates kind='task'); explicit arguments win.")] = None,
     post_to_project_chat: Annotated[bool, Field(description="Also announce the task in the project conversation, like the web form's default.")] = False,
     one_copy_per_assignee: Annotated[bool, Field(description="Create a separate copy of the task for each assignee (enterprise plans).")] = False,
-) -> dict:
+) -> dict[str, Any]:
     """Create a task (وظیفه) in a project, with everything the web form offers: assignees, description,
     start / deadline / reminder, repetition, checklist, board, labels, approvers, weight, files and
-    templates. Remember: only remind_at places a task on the calendar. Only on the user's explicit request."""
+    templates. Missing/empty assignees use the template defaults, otherwise yourself if a project member.
+    Returns created count, task ids and verified=true only after reading the saved tasks back and checking
+    their fields. Errors or partial results are NOT success; read candidate ids before retrying to avoid
+    duplicates. Remember: only remind_at places a task on the calendar. Only on the user's explicit request."""
+    title = title.strip()
+    if not title:
+        raise ToolError("A non-empty task title is required; nothing was created")
     full = project_full(project_id)
     if template_id:
         tpl = _template(project_id, template_id)
@@ -232,7 +238,15 @@ def mizito_create_task(
             day = datetime.now(TEHRAN) + timedelta(days=tpl["default_due"])
             remind_at = day.replace(hour=8, minute=0, second=0, microsecond=0).isoformat()
     if not assignee_ids:
-        raise ToolError("assignee_ids is required")
+        me = client.my_user_id()
+        if not me or me not in (full.get("members") or []):
+            raise ToolError("No assignee was supplied and you are not a project member. Nothing was created. "
+                            "Choose assignee_ids from mizito_get_project's members; do not guess another person.")
+        assignee_ids = [me]
+    assignee_ids = list(dict.fromkeys(assignee_ids))
+    if any(a not in (full.get("members") or []) for a in assignee_ids):
+        raise ToolError("Every assignee must be a project member. Nothing was created; "
+                        "use member ids from mizito_get_project (do not add members without permission).")
     if approver_ids and (len(assignee_ids) < 2 or any(a not in assignee_ids for a in approver_ids)):
         raise ToolError("approver_ids only apply to tasks with several assignees and must be among them")
     if repeat != "none" and not remind_at:
@@ -257,22 +271,78 @@ def mizito_create_task(
         payload["from_template"] = template_id
     if one_copy_per_assignee:
         payload.update(copy_users=assignee_ids, assignee=None)
-    result = client.call("tasks.add", payload)
-    if result is False:
-        raise ToolError("Mizito rejected the task (check project_id and that the assignees are project members)")
-    check(result, "create the task")
-    tasks = [t for t in (result if isinstance(result, list) else [result]) if isinstance(t, dict)]
-    remember_tasks(tasks)
-    if remind_at:
-        for t in tasks:  # older servers ignore alarm_options on add; set the reminder the way the calendar does
-            if not t.get("alarm_at") and repeat == "none":
-                client.call("tasks.snooze", {"token": t["access_token"], "project": t.get("project"),
-                                             "alarm_at": iso(remind_at), "update_repeat_base": False})
-        tasks = [load_task(t["_id"]) for t in tasks]
-    out = {"created": len(tasks), "tasks": [task_ref(t) for t in tasks]}
+    candidate_ids = []
+    try:
+        result = client.call("tasks.add", payload)
+        rows = result if isinstance(result, list) else [result]
+        candidate_ids = [t["_id"] for t in rows if isinstance(t, dict) and isinstance(t.get("_id"), str) and t["_id"]]
+        check(result, "create the task")
+        expected_count = len(assignee_ids) if one_copy_per_assignee else 1
+        if len(candidate_ids) != len(rows) or len(set(candidate_ids)) != expected_count or len(rows) != expected_count:
+            raise ToolError(f"Expected {expected_count} task(s), but Mizito returned {len(candidate_ids)} usable ids")
+        for row in rows:
+            check(row, "create the task")
+        remember_tasks(rows)
+        saved = [load_task(tid) for tid in candidate_ids]
+        if remind_at:
+            for index, task in enumerate(saved):
+                # Some Mizito versions ignore the reminder on add. Repair only the known new task.
+                if not task.get("alarm_at") and repeat == "none":
+                    check(client.call("tasks.snooze", {"token": task["access_token"], "project": project_id,
+                                                       "alarm_at": iso(remind_at), "update_repeat_base": False}),
+                          "set the new task's reminder")
+                    saved[index] = load_task(task["_id"])
+        expected_assignees = sorted([[a] for a in assignee_ids]) if one_copy_per_assignee else [sorted(assignee_ids)]
+        if sorted(sorted(t.get("assignee") or []) for t in saved) != expected_assignees:
+            raise ToolError("Saved task assignees do not match the requested assignees")
+        for task in saved:
+            _verify_created_task(task, payload, check_weight=weight is not None)
+        refs = [task_ref(t) for t in saved]
+    except (ToolError, AttributeError, KeyError, TypeError, ValueError) as exc:
+        raise creation_error("task", candidate_ids, str(exc)) from exc
+    out = {"created": len(saved), "verified": True, "tasks": refs}
     if deadline and not remind_at:
         out["note"] = "No remind_at: the task is listed under 'without time' on the calendar."
     return out
+
+
+def _verify_created_task(task: dict, payload: dict, *, check_weight: bool) -> None:
+    """Check read-after-write state, including optional fields the user asked to save."""
+    mismatch = []
+    for key in ("title", "project"):
+        if task.get(key) != payload[key]:
+            mismatch.append(key)
+    if task.get("deleted") or task.get("archived"):
+        mismatch.append("deleted/archived")
+    if html_to_text(task.get("notes")) != html_to_text(payload["notes"]):
+        mismatch.append("notes")
+    for key in ("deadline", "deadline_start"):
+        if payload.get(key) and iso(task.get(key)) != payload[key]:
+            mismatch.append(key)
+    for key in (("kanban_board", "weight") if check_weight else ("kanban_board",)):
+        if payload.get(key) and task.get(key) != payload[key]:
+            mismatch.append(key)
+    for key in ("labels", "responsible"):
+        if set(task.get(key) or []) != set(payload.get(key) or []):
+            mismatch.append(key)
+    if [(c.get("title"), bool(c.get("checked"))) for c in task.get("checklist") or []] != [
+            (c["title"], False) for c in payload["checklist"]]:
+        mismatch.append("checklist")
+    if {f["file_id"] for f in files_in(task.get("attachments"))} != {
+            f["file_id"] for f in files_in(payload["attachments"])}:
+        mismatch.append("attachments")
+    reminder = payload.get("alarm_options")
+    actual = task.get("alarm_options") or {}
+    expected_repeat = reminder["repeat_type"] if reminder else "none"
+    if (actual.get("repeat_type") or "none") != expected_repeat:
+        mismatch.append("repeat")
+    if reminder:
+        if iso(task.get("alarm_at")) != reminder["date"]:
+            mismatch.append("reminder")
+        if expected_repeat != "none" and actual.get("repeat_options") != reminder["repeat_options"]:
+            mismatch.append("repeat")
+    if mismatch:
+        raise ToolError(f"Task {task['_id']} was returned, but saved fields do not match: {', '.join(mismatch)}")
 
 
 @tool("افزودن رویداد به تقویم", kind="create")

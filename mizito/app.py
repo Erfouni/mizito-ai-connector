@@ -46,10 +46,13 @@ How Mizito is organised
   meeting minutes (صورتجلسه) are special messages inside a conversation (mizito_create_poll, mizito_create_minute).
 - Projects (پروژه) contain kanban boards (ستون/لیست) and tasks (وظیفه). mizito_get_project shows members,
   boards, the project conversation and task counts. A project needs a project conversation to appear in the
-  web app's Projects tab; mizito_create_project creates both.
+  web app's Projects tab; mizito_create_project creates both. The dashboard shows only projects with open
+  tasks; an empty project can be visible in Projects but absent from the dashboard.
 - Tasks always belong to a project and are addressed by their `_id`. Deadline (مهلت) and reminder (زمان
   یادآوری) differ: only the reminder puts a task on the calendar (تقویم). Tasks can repeat (mizito_set_task_repeat),
   have checklists, approvers, labels, comments (گزارش) and attachments.
+  When creating a task without assignee_ids (or with []), template assignees take precedence; otherwise
+  it is assigned to the logged-in user, only if that user is a project member. Never guess another member.
 - Letters (نامه، کارتابل) are threaded internal mail. Notes (یادداشت) are personal. Labels (برچسب) tag items.
 - Files: every file in results has a `file_id`; mizito_read_file extracts its text, mizito_get_file_link gives a
   download link, mizito_upload_file stores a new file whose id can be attached to messages, letters and tasks.
@@ -70,6 +73,16 @@ Safety
   deletions require `confirm` to repeat the item's exact title.
 - An HTTP 400/403/405 error usually means the feature is not in the workspace plan or needs (project) admin
   rights. Tell the user that instead of retrying with guessed parameters.
+
+Reporting results
+- Never say an action is done just because you planned it or called a tool. A tool error is NOT success.
+- Project/task creation returns verified=true only after an independent read from Mizito. Report only the
+  returned ids/count and verified result. Empty results, zero created items, or unverified results are not success.
+- For a request with several actions, track each result separately. A created project does not mean its tasks
+  were created. Report partial completion, the confirmed ids/count, failed steps and the reason explicitly.
+- If creation cannot be verified, it may already exist. Read the candidate ids with mizito_get_task or
+  mizito_get_project (or list the project's tasks) before deciding what to do. Never blindly retry creation:
+  that can duplicate data. For validation errors before a write, correct the inputs and then retry.
 """
 
 mcp = MCPServer("mizito", title="Mizito", instructions=INSTRUCTIONS, version="0.3.1")
@@ -344,6 +357,16 @@ def check(result: Any, action: str) -> Any:
         if result.get("error") or result.get("success") is False or result.get("ok") is False:
             raise ToolError(f"Mizito refused to {action}: {message or result}")
     return result
+
+
+def creation_error(kind: str, candidate_ids: list[str], reason: str) -> ToolError:
+    """A failed read after a write is an uncertain outcome, not proof that nothing was created."""
+    return ToolError(
+        f"{kind.capitalize()} creation is NOT verified. Candidate {kind} ids: {candidate_ids or 'unknown'}. "
+        f"{compact(reason)}. Do not report success or blindly retry creation: some items may already exist. "
+        f"Read these ids with mizito_get_{kind}, or list the project/tasks, before retrying. "
+        "Report any earlier successful steps separately."
+    )
 
 
 def names(user_ids: Any) -> list[str]:
