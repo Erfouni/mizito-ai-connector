@@ -165,6 +165,57 @@ def test_save_env() -> None:
         assert values == {"MCP_PORT": "8765", "MIZITO_TOKEN": "new", "MIZITO_PASSWORD": password}, values
 
 
+def test_create_project_verifies() -> None:
+    import os
+    os.environ.setdefault("MIZITO_TOKEN", "x")
+    os.environ["MIZITO_ENABLE_WRITE"] = "1"
+    from mizito import projects
+
+    class Fake:
+        def __init__(self, dialog, listed, in_tab):
+            self.dialog, self.listed, self.in_tab = dialog, listed, in_tab
+
+        def my_user_id(self): return "me"
+        def user_name(self, u): return u
+
+        def call(self, endpoint, payload=None):
+            if endpoint == "chat.createDialog": return self.dialog
+            if endpoint == "projects.getList":
+                return {"projects": [{"_id": "p1", "dialog": "d1"}] if self.listed else []}
+            if endpoint == "projects.allSummary":
+                return {"summaries": [{"project": "p1"}] if self.in_tab else []}
+            if endpoint == "projects.full": return {"_id": "p1", "title": "T", "dialog": "d1"}
+            raise AssertionError(endpoint)
+
+    real_client, real_sleep = projects.client, projects.time.sleep
+    projects.time.sleep = lambda _s: None
+    try:
+        import mizito.app as app
+        for dialog, listed, in_tab, ok in (
+            ({"_id": "d1", "project_entity": "p1"}, True, True, True),
+            ({"_id": "d1", "project_entity": "p1"}, True, False, False),  # accepted but not in the Projects tab
+            ({"_id": "d1", "project_entity": "p1"}, False, True, False),  # not in the project list
+            ({"_id": "d1"}, False, False, False),  # a plain conversation, no project
+            (False, False, False, False),
+        ):
+            projects.client = app.client = Fake(dialog, listed, in_tab)
+            try:
+                out = projects.mizito_create_project("T")
+            except ToolError:
+                assert not ok, (dialog, listed, in_tab)
+            else:
+                assert ok and out["created"] and out["project_id"] == "p1", out
+        try:
+            projects.mizito_create_project("T", color="violet")
+        except ToolError:
+            pass
+        else:
+            raise AssertionError("accepted an unknown color")
+    finally:
+        projects.client = app.client = real_client
+        projects.time.sleep = real_sleep
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_") and callable(fn):

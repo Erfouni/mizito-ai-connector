@@ -570,8 +570,10 @@ Everything about one project: owner, members and admins (with names), kanban boa
 
 ```text
 Create a project exactly like the web app's «ایجاد پروژه» button: the project plus its project
-    conversation, with you as owner/admin and member_ids as members. It shows in the Projects tab. Returns
-    project_id and conversation_id. Only on the user's explicit request.
+    conversation, with you as owner/admin and member_ids as members. Returns project_id and conversation_id
+    only after checking that the project really shows in the Projects tab and in mizito_list_projects;
+    otherwise it raises an error, so never tell the user the project exists unless this call succeeded.
+    Only on the user's explicit request.
 ```
 
 | پارامتر | نوع | لازم | توضیح |

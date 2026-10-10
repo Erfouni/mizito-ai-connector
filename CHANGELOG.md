@@ -1,5 +1,15 @@
 # تغییرات · Changelog
 
+## Unreleased
+
+<div dir="rtl">
+
+- **رفع باگ ساخت پروژه:** `mizito_create_project` حالا بعد از ساخت، چند ثانیه صبر می‌کند و مطمئن می‌شود پروژه واقعاً در فهرست پروژه‌ها و تب «پروژه‌ها» آمده است. اگر نیامده باشد (یا فقط یک گفتگو ساخته شده باشد) خطا می‌دهد، تا هوش مصنوعی به‌اشتباه نگوید «پروژه ساخته شد». رنگ نامعتبر هم قبل از ارسال رد می‌شود.
+
+</div>
+
+- **Fix: project creation:** `mizito_create_project` now waits a few seconds after creating and confirms the project really appears in the project list and the Projects tab. When it does not (or only a conversation was made) it raises an error, so the AI no longer reports a project as created when it is not there. An unknown color is rejected before sending.
+
 ## v0.3.1 · ۱۱ مهر ۱۴۰۵ (2026-10-03)
 
 <div dir="rtl">

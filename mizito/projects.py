@@ -1,12 +1,13 @@
 """Projects: listing, overview, creation, members, kanban boards, advanced features, files, archive, clone."""
 from __future__ import annotations
 
+import time
 from typing import Annotated, Literal
 
 from pydantic import Field
 
 from mizito.app import (
-    ADVANCED_FIELDS, ProjectId, ToolError, UserIds, call, check, client, compact, file_ref, jalali, project_full,
+    ADVANCED_FIELDS, COLORS, ProjectId, ToolError, UserIds, call, check, client, compact, file_ref, jalali, project_full,
     project_overview, projects_tab, tool,
 )
 from mizito_client import MizitoError
@@ -53,6 +54,19 @@ def mizito_get_project(project_id: ProjectId) -> dict:
 # --- write tools ---------------------------------------------------------------------------------
 
 
+def _wait_for_project(project_id: str, attempts: int = 6, delay: float = 1.0) -> tuple[bool, bool]:
+    """(in projects.getList, in the Projects tab); Mizito can take a moment to list a new project."""
+    listed = in_tab = False
+    for attempt in range(attempts):
+        listed = any(p.get("_id") == project_id for p in (client.call("projects.getList", {}) or {}).get("projects", []))
+        in_tab = project_id in projects_tab()
+        if listed and in_tab:
+            break
+        if attempt < attempts - 1:
+            time.sleep(delay)
+    return listed, in_tab
+
+
 @tool("ساخت پروژه", kind="create")
 def mizito_create_project(
     title: Annotated[str, Field(description="Project name.")],
@@ -60,19 +74,33 @@ def mizito_create_project(
     color: Annotated[str, Field(description="Project color, e.g. grey, red, orange, yellow, green, cyan, blue, purple.")] = "grey",
 ) -> dict:
     """Create a project exactly like the web app's «ایجاد پروژه» button: the project plus its project
-    conversation, with you as owner/admin and member_ids as members. It shows in the Projects tab. Returns
-    project_id and conversation_id. Only on the user's explicit request."""
+    conversation, with you as owner/admin and member_ids as members. Returns project_id and conversation_id
+    only after checking that the project really shows in the Projects tab and in mizito_list_projects;
+    otherwise it raises an error, so never tell the user the project exists unless this call succeeded.
+    Only on the user's explicit request."""
+    title = title.strip()
+    if not title:
+        raise ToolError("The project needs a name")
+    if color not in COLORS:
+        raise ToolError(f"Unknown color {color!r}; use one of {', '.join(COLORS)}")
     me = client.my_user_id()
     payload = {"title": title, "is_public": False, "is_project_group": True,
                "members": [m for m in member_ids or [] if m != me], "color": color}
-    dialog = client.call("chat.createDialog", payload) or {}
-    project_id = dialog.get("project_entity") if isinstance(dialog, dict) else None
-    if not project_id and isinstance(dialog, dict) and dialog.get("_id"):
+    dialog = check(client.call("chat.createDialog", payload), "create the project") or {}
+    if not isinstance(dialog, dict) or not dialog.get("_id"):
+        raise ToolError("Mizito did not create the project (no permission to create projects?)")
+    project_id = dialog.get("project_entity")
+    if not project_id:
         project_id = next((p["_id"] for p in (client.call("projects.getList", {}) or {}).get("projects", [])
                            if p.get("dialog") == dialog["_id"]), None)
     if not project_id:
-        raise ToolError("Mizito did not create the project (no permission to create projects?)")
-    return {"created": True, "project_id": project_id, "conversation_id": dialog.get("_id"),
+        raise ToolError(f"Mizito made a conversation ({dialog['_id']}) but no project from it: the project was NOT created "
+                        "(the account may lack the permission to create projects)")
+    listed, in_tab = _wait_for_project(project_id)
+    if not (listed and in_tab):
+        raise ToolError(f"Mizito accepted the request (project_id {project_id}, conversation_id {dialog['_id']}) but the project "
+                        f"does not show in {'the project list' if not listed else 'the Projects tab'}; do not report it as created")
+    return {"created": True, "project_id": project_id, "conversation_id": dialog["_id"],
             "project": project_overview(project_id)}
 
 
