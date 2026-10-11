@@ -1,12 +1,12 @@
 """Projects: listing, overview, creation, members, kanban boards, advanced features, files, archive, clone."""
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import Field
 
 from mizito.app import (
-    ADVANCED_FIELDS, ProjectId, ToolError, UserIds, call, check, client, compact, file_ref, jalali, project_full,
+    ADVANCED_FIELDS, ProjectId, ToolError, UserIds, call, check, client, compact, creation_error, file_ref, jalali, project_full,
     project_overview, projects_tab, tool,
 )
 from mizito_client import MizitoError
@@ -53,27 +53,49 @@ def mizito_get_project(project_id: ProjectId) -> dict:
 # --- write tools ---------------------------------------------------------------------------------
 
 
-@tool("ساخت پروژه", kind="create")
+@tool("ساخت پروژه", kind="create", structured=True)
 def mizito_create_project(
     title: Annotated[str, Field(description="Project name.")],
     member_ids: Annotated[list[str] | None, Field(description="Members besides you (ids from mizito_list_users).")] = None,
     color: Annotated[str, Field(description="Project color, e.g. grey, red, orange, yellow, green, cyan, blue, purple.")] = "grey",
-) -> dict:
+) -> dict[str, Any]:
     """Create a project exactly like the web app's «ایجاد پروژه» button: the project plus its project
     conversation, with you as owner/admin and member_ids as members. It shows in the Projects tab. Returns
-    project_id and conversation_id. Only on the user's explicit request."""
+    project_id, conversation_id and verified=true ONLY after reading the project back and checking its
+    conversation, members and visibility in Projects. A tool error is not success; do not blindly retry
+    creation after a verification error. Project creation does not create any tasks. Only on explicit request."""
+    title = title.strip()
+    if not title:
+        raise ToolError("A non-empty project title is required; nothing was created")
     me = client.my_user_id()
     payload = {"title": title, "is_public": False, "is_project_group": True,
                "members": [m for m in member_ids or [] if m != me], "color": color}
-    dialog = client.call("chat.createDialog", payload) or {}
-    project_id = dialog.get("project_entity") if isinstance(dialog, dict) else None
-    if not project_id and isinstance(dialog, dict) and dialog.get("_id"):
-        project_id = next((p["_id"] for p in (client.call("projects.getList", {}) or {}).get("projects", [])
-                           if p.get("dialog") == dialog["_id"]), None)
-    if not project_id:
-        raise ToolError("Mizito did not create the project (no permission to create projects?)")
-    return {"created": True, "project_id": project_id, "conversation_id": dialog.get("_id"),
-            "project": project_overview(project_id)}
+    candidate_ids = []
+    try:
+        dialog = client.call("chat.createDialog", payload)
+        project_id = dialog.get("project_entity") if isinstance(dialog, dict) else None
+        if isinstance(project_id, str) and project_id:
+            candidate_ids = [project_id]
+        check(dialog, "create the project")
+        if not isinstance(dialog, dict) or not isinstance(dialog.get("_id"), str) or not dialog["_id"]:
+            raise ToolError("Mizito returned no project conversation id")
+        if not project_id:
+            project_id = next((p["_id"] for p in (client.call("projects.getList", {}) or {}).get("projects", [])
+                               if p.get("dialog") == dialog["_id"]), None)
+        if not isinstance(project_id, str) or not project_id:
+            raise ToolError("Mizito returned no project id")
+        candidate_ids = [project_id]
+        project = project_overview(project_id)
+        members = {m["id"] for m in project.get("members", [])}
+        if (project.get("project_id") != project_id or project.get("title") != title
+                or project.get("conversation_id") != dialog["_id"] or not project.get("has_conversation")
+                or not project.get("in_projects_tab") or project.get("archived")
+                or project.get("color") != color or not (set(payload["members"]) | {me}) <= members):
+            raise ToolError("The saved project does not match its title, color, conversation, members or Projects visibility")
+    except (ToolError, AttributeError, KeyError, TypeError, ValueError) as exc:
+        raise creation_error("project", candidate_ids, str(exc)) from exc
+    return {"created": True, "verified": True, "project_id": project_id, "conversation_id": dialog["_id"],
+            "project": project}
 
 
 @tool("ویرایش پروژه", kind="update")

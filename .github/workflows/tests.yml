@@ -18,6 +18,8 @@ jobs:
         run: uv sync --frozen
       - name: Offline tests (Jalali dates, repeat rules, reading Word/Excel/PowerPoint)
         run: uv run python tests/test_offline.py
+      - name: Project and task creation verification
+        run: uv run python tests/test_creation.py
       - name: Every tool loads with a valid schema
         env:
           MIZITO_ENABLE_WRITE: "1"

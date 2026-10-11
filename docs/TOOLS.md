@@ -528,7 +528,7 @@ Saved templates (الگو): minute and poll templates of the workspace, or the t
 |---|---|---|---|---|
 | [`mizito_list_projects`](#mizito_list_projects) | فهرست پروژه‌ها | فهرست پروژه‌ها با رنگ، اعضا و اینکه در تب پروژه‌ها دیده می‌شوند یا نه. | خواندنی | ✅ تست‌شده |
 | [`mizito_get_project`](#mizito_get_project) | نمای کامل یک پروژه | نمای کامل یک پروژه: اعضا و مدیران، ستون‌ها با آمار هر ستون، برچسب‌ها، گفتگوی پروژه، امکانات پیشرفته و آمار وظایف. | خواندنی | ✅ تست‌شده |
-| [`mizito_create_project`](#mizito_create_project) | ساخت پروژه | ساخت پروژه دقیقاً مثل دکمه‌ی «ایجاد پروژه» وب: پروژه به‌همراه گفتگوی پروژه. | ساختن | ✅ تست‌شده |
+| [`mizito_create_project`](#mizito_create_project) | ساخت پروژه | ساخت پروژه به‌همراه گفتگوی پروژه؛ موفقیت فقط پس از بازخوانی و تأیید عضویت و نمایش در تب پروژه‌ها. | ساختن | ✅ تست‌شده |
 | [`mizito_update_project`](#mizito_update_project) | ویرایش پروژه | تغییر نام، رنگ، اعضا و برچسب‌های پروژه. | تغییر | ✅ تست‌شده |
 | [`mizito_add_project_members`](#mizito_add_project_members) | افزودن عضو به پروژه | افزودن عضو به پروژه. | ساختن | 🟡 تست‌نشده |
 | [`mizito_add_project_board`](#mizito_add_project_board) | افزودن ستون (لیست) کانبان | افزودن ستون (لیست) کانبان به پروژه. | ساختن | ✅ تست‌شده |
@@ -566,12 +566,14 @@ Everything about one project: owner, members and admins (with names), kanban boa
 
 ### mizito_create_project
 
-**ساخت پروژه** — ساخت پروژه دقیقاً مثل دکمه‌ی «ایجاد پروژه» وب: پروژه به‌همراه گفتگوی پروژه.
+**ساخت پروژه** — ساخت پروژه به‌همراه گفتگوی پروژه؛ موفقیت فقط پس از بازخوانی و تأیید عضویت و نمایش در تب پروژه‌ها.
 
 ```text
 Create a project exactly like the web app's «ایجاد پروژه» button: the project plus its project
     conversation, with you as owner/admin and member_ids as members. It shows in the Projects tab. Returns
-    project_id and conversation_id. Only on the user's explicit request.
+    project_id, conversation_id and verified=true ONLY after reading the project back and checking its
+    conversation, members and visibility in Projects. A tool error is not success; do not blindly retry
+    creation after a verification error. Project creation does not create any tasks. Only on explicit request.
 ```
 
 | پارامتر | نوع | لازم | توضیح |
@@ -719,7 +721,7 @@ Files attached anywhere in a project (its conversation and its tasks), newest fi
 | [`mizito_get_task_extras`](#mizito_get_task_extras) | سابقه، بازدید و امکانات پیشرفته‌ی وظیفه | چه کسی وظیفه را ساخته و دیده، جایگاهش در گانت، دکمه‌های اتوماسیون و گردش کار. | خواندنی | ✅ تست‌شده |
 | [`mizito_calendar`](#mizito_calendar) | تقویم من یا پروژه | تقویم یک ماه شمسی (خودتان یا یک پروژه) بر اساس زمان یادآوری. | خواندنی | ✅ تست‌شده |
 | [`mizito_get_history`](#mizito_get_history) | سابقه‌ی تغییرات وظیفه یا پروژه | سابقه‌ی تغییرات یک وظیفه یا پروژه. | خواندنی | ✅ تست‌شده |
-| [`mizito_create_task`](#mizito_create_task) | ساخت وظیفه | ساخت وظیفه با همه‌ی امکانات فرم وب: مسئولان، شروع، مهلت، یادآوری، تکرار، چک‌لیست، ستون، برچسب، تأییدکننده، وزن، فایل و الگو. | ساختن | ✅ تست‌شده |
+| [`mizito_create_task`](#mizito_create_task) | ساخت وظیفه | ساخت وظیفه و تأیید ثبت واقعی آن با بازخوانی. مسئول نامشخص از الگو یا خود کاربرِ عضو پروژه پر می‌شود؛ خطا و ثبت ناقص، موفقیت گزارش نمی‌شوند. | ساختن | ✅ تست‌شده |
 | [`mizito_create_calendar_event`](#mizito_create_calendar_event) | افزودن رویداد به تقویم | افزودن رویداد به تقویم (وظیفه‌ای با زمان شروع و پایان، قابل تکرار). | ساختن | ✅ تست‌شده |
 | [`mizito_update_task`](#mizito_update_task) | ویرایش وظیفه | ویرایش وظیفه: عنوان، توضیح، مسئولان، برچسب، پروژه، ستون، شروع، مهلت، تأییدکننده، وزن، چک‌لیست و فایل. | تغییر | ✅ تست‌شده |
 | [`mizito_comment_on_task`](#mizito_comment_on_task) | ثبت گزارش (کامنت) روی وظیفه | ثبت گزارش روی وظیفه، با پاسخ، منشن و فایل. | ساختن | ✅ تست‌شده |
@@ -822,19 +824,22 @@ Change history (سابقه تغییرات) of a task or project: who changed wha
 
 ### mizito_create_task
 
-**ساخت وظیفه** — ساخت وظیفه با همه‌ی امکانات فرم وب: مسئولان، شروع، مهلت، یادآوری، تکرار، چک‌لیست، ستون، برچسب، تأییدکننده، وزن، فایل و الگو.
+**ساخت وظیفه** — ساخت وظیفه و تأیید ثبت واقعی آن با بازخوانی. مسئول نامشخص از الگو یا خود کاربرِ عضو پروژه پر می‌شود؛ خطا و ثبت ناقص، موفقیت گزارش نمی‌شوند.
 
 ```text
 Create a task (وظیفه) in a project, with everything the web form offers: assignees, description,
     start / deadline / reminder, repetition, checklist, board, labels, approvers, weight, files and
-    templates. Remember: only remind_at places a task on the calendar. Only on the user's explicit request.
+    templates. Missing/empty assignees use the template defaults, otherwise yourself if a project member.
+    Returns created count, task ids and verified=true only after reading the saved tasks back and checking
+    their fields. Errors or partial results are NOT success; read candidate ids before retrying to avoid
+    duplicates. Remember: only remind_at places a task on the calendar. Only on the user's explicit request.
 ```
 
 | پارامتر | نوع | لازم | توضیح |
 |---|---|---|---|
 | `title` | string | بله | Task title. |
-| `assignee_ids` | list[string] | بله | Who does it: member ids from mizito_list_users (mizito_whoami's user_id for yourself). |
 | `project_id` | string | بله | Project the task belongs to (Mizito requires one), from mizito_list_projects. |
+| `assignee_ids` | list[string] (اختیاری) |  | Project member ids. Omit or [] to use template assignees, otherwise yourself (only if you are a project member). Never guess another person's id. |
 | `notes` | string |  | Description (plain text). (پیش‌فرض: ``) |
 | `deadline` | string (اختیاری) |  | Due date (مهلت); does NOT put the task on the calendar. Date/time as ISO 8601 ("2026-10-01T14:30", Tehran time when no offset is given) or Jalali ("1405/07/09 14:30"); a date without a time means 09:00. |
 | `checklist` | list[string] (اختیاری) |  | Checklist item titles. |
