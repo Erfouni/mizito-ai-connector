@@ -123,6 +123,12 @@ def _pptx(data: bytes) -> str:
                            for i, n in enumerate(slides, 1))
 
 
+# A cell or row is either self-closing (<c r="B2" s="1"/>) or runs to its closing tag. Both forms are matched, so a
+# self-closing element never swallows the element after it.
+_XLSX_ROW = re.compile(r"<row\b[^>]*?(?:/>|>(.*?)</row>)", re.S)
+_XLSX_CELL = re.compile(r"<c\b([^>]*?)(?:/>|>(.*?)</c>)", re.S)
+
+
 def _xlsx(data: bytes) -> str:
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         names = z.namelist()
@@ -137,9 +143,9 @@ def _xlsx(data: bytes) -> str:
                         key=lambda n: int(re.findall(r"\d+", n)[-1]))
         for i, n in enumerate(sheets):
             rows = []
-            for row in re.findall(r"<row[^>]*>(.*?)</row>", z.read(n).decode("utf-8", "replace"), re.S):
+            for row in _XLSX_ROW.findall(z.read(n).decode("utf-8", "replace")):
                 cells = []
-                for attrs, body in re.findall(r"<c([^>]*)>(.*?)</c>", row, re.S):
+                for attrs, body in _XLSX_CELL.findall(row):
                     value = re.search(r"<v>(.*?)</v>", body, re.S)
                     inline = re.findall(r"<t[^>]*>(.*?)</t>", body, re.S)
                     if 't="s"' in attrs and value:
