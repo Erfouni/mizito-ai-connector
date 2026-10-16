@@ -103,6 +103,22 @@ def test_extract_text() -> None:
     assert extract_text("h.bin", None, b"\x00\x01")[0] == "binary"
 
 
+def test_xlsx_self_closing_cells_and_rows() -> None:
+    # Excel writes <c r="B2" s="1"/> for a styled empty cell and <row r="3" .../> for an empty row with a height.
+    # Neither may swallow the element after it.
+    shared = "".join(f"<si><t>{s}</t></si>" for s in ("Task", "Owner", "Note", "Desk", "Fix the drawer", "Chair"))
+    sheet = ('<worksheet><sheetData>'
+             '<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1" t="s"><v>1</v></c><c r="C1" t="s"><v>2</v></c></row>'
+             '<row r="2"><c r="A2" t="s"><v>3</v></c><c r="B2" s="1"/><c r="C2" t="s"><v>4</v></c></row>'
+             '<row r="3" ht="30" customHeight="1"/>'
+             '<row r="4"><c r="A4" t="s"><v>5</v></c><c r="B4" t="s"/><c r="C4"><v>42</v></c></row>'
+             '</sheetData></worksheet>')
+    xlsx = _zip({"xl/workbook.xml": '<workbook><sheets><sheet name="Data" sheetId="1"/></sheets></workbook>',
+                 "xl/sharedStrings.xml": f"<sst>{shared}</sst>",
+                 "xl/worksheets/sheet1.xml": sheet})
+    assert extract_text("c.xlsx", None, xlsx) == ("xlsx", "[Data]\nTask\tOwner\tNote\nDesk\t\tFix the drawer\n\nChair\t\t42")
+
+
 def test_login() -> None:
     assert login_username(" ۹۱۲۱۲۳۴۵۶۷ ") == "09121234567"  # as the web form: Persian digits, leading 0
     assert login_username("989121234567") == "+989121234567"
