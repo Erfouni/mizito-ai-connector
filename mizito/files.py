@@ -10,6 +10,7 @@ import html
 import io
 import json
 import mimetypes
+import posixpath
 import re
 import zipfile
 from typing import Annotated, Any
@@ -130,12 +131,24 @@ def _xlsx(data: bytes) -> str:
         if "xl/sharedStrings.xml" in names:
             for si in re.findall(r"<si>(.*?)</si>", z.read("xl/sharedStrings.xml").decode("utf-8", "replace"), re.S):
                 shared.append(html.unescape("".join(re.findall(r"<t[^>]*>(.*?)</t>", si, re.S))))
-        sheet_names = re.findall(r'<sheet [^>]*name="([^"]+)"', z.read("xl/workbook.xml").decode("utf-8", "replace")) \
-            if "xl/workbook.xml" in names else []
+        workbook = z.read("xl/workbook.xml").decode("utf-8", "replace") if "xl/workbook.xml" in names else ""
+        relationships = {}
+        rel_path = "xl/_rels/workbook.xml.rels"
+        if rel_path in names:
+            rel_xml = z.read(rel_path).decode("utf-8", "replace")
+            relationships = {rid: posixpath.normpath(posixpath.join("xl", target.lstrip("/")))
+                             for rid, target in re.findall(
+                                 r'<Relationship\b(?=[^>]*\bId="([^"]+)")(?=[^>]*\bTarget="([^"]+)")[^>]*/?>', rel_xml)}
+        workbook_sheets = re.findall(
+            r'<sheet\b(?=[^>]*\bname="([^"]+)")(?=[^>]*\br:id="([^"]+)")[^>]*/?>', workbook)
         out = []
-        sheets = sorted((n for n in names if re.match(r"xl/worksheets/sheet\d+\.xml$", n)),
-                        key=lambda n: int(re.findall(r"\d+", n)[-1]))
-        for i, n in enumerate(sheets):
+        sheets = [(title, relationships[rid]) for title, rid in workbook_sheets if relationships.get(rid) in names]
+        if not sheets:
+            fallback_names = re.findall(r'<sheet\b[^>]*\bname="([^"]+)"', workbook)
+            sheets = [(fallback_names[i] if i < len(fallback_names) else "", n)
+                      for i, n in enumerate(sorted((n for n in names if re.match(r"xl/worksheets/sheet\d+\.xml$", n)),
+                                                   key=lambda n: int(re.findall(r"\d+", n)[-1])))]
+        for i, (sheet_name, n) in enumerate(sheets):
             rows = []
             for row in re.findall(r"<row[^>]*>(.*?)</row>", z.read(n).decode("utf-8", "replace"), re.S):
                 cells = []
@@ -149,7 +162,7 @@ def _xlsx(data: bytes) -> str:
                     else:
                         cells.append(html.unescape(value.group(1)) if value else "")
                 rows.append("\t".join(cells))
-            title = sheet_names[i] if i < len(sheet_names) else f"sheet {i + 1}"
+            title = sheet_name or f"sheet {i + 1}"
             out.append(f"[{html.unescape(title)}]\n" + "\n".join(rows))
         return "\n\n".join(out)
 
