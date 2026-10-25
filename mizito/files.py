@@ -110,7 +110,7 @@ def _xml_text(xml: str, paragraph: str) -> str:
 
 def _docx(data: bytes) -> str:
     with zipfile.ZipFile(io.BytesIO(data)) as z:
-        parts = [n for n in z.namelist() if re.match(r"word/(document|header\d*|footer\d*|footnotes)\.xml$", n)]
+        parts = [n for n in z.namelist() if re.match(r"word/(document|header\d*|footer\d*|footnotes|endnotes)\.xml$", n)]
         parts.sort(key=lambda n: (not n.startswith("word/document"), n))
         return "\n".join(_xml_text(z.read(n).decode("utf-8", "replace"), r"</w:p>") for n in parts)
 
