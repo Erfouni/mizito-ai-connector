@@ -86,6 +86,12 @@ def test_extract_text() -> None:
     docx = _zip({"word/document.xml": '<w:document><w:body><w:p><w:r><w:t>سلام</w:t></w:r></w:p>'
                                       '<w:p><w:r><w:t>دنیا &amp; ما</w:t></w:r></w:p></w:body></w:document>'})
     assert extract_text("a.docx", None, docx) == ("docx", "سلام\nدنیا & ما\n")
+    endnoted = _zip({
+        "word/document.xml": '<w:document><w:body><w:p><w:r><w:t>Main claim</w:t></w:r></w:p></w:body></w:document>',
+        "word/endnotes.xml": '<w:endnotes><w:endnote><w:p><w:r><w:t>Important supporting source</w:t></w:r></w:p>'
+                             '</w:endnote></w:endnotes>'})
+    assert extract_text("notes.docx", None, endnoted) == (
+        "docx", "Main claim\n\nImportant supporting source\n")
     xlsx = _zip({
         "xl/workbook.xml": '<workbook><sheets><sheet name="فروش" sheetId="1"/></sheets></workbook>',
         "xl/sharedStrings.xml": "<sst><si><t>کالا</t></si><si><t>تعداد</t></si></sst>",
