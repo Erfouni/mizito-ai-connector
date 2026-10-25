@@ -47,6 +47,18 @@ def test_parse_when() -> None:
         except ToolError:
             continue
         raise AssertionError(f"accepted {bad!r}")
+    # Esfand 30 exists only in a leap year: a common year's 12/30 is rejected
+    # instead of sliding into the next year (#7).
+    for bad in ("1405/12/30", "۱۴۰۵/۱۲/۳۰", "1405/12/30 10:00"):
+        try:
+            parse_when(bad)
+        except ToolError:
+            continue
+        raise AssertionError(f"accepted {bad!r}")
+    assert iso("1403/12/30") == "2025-03-20T05:30:00.000Z"
+    assert iso("۱۴۰۳/۱۲/۳۰") == iso("1403/12/30")
+    assert iso("1403/12/30 10:00") == "2025-03-20T06:30:00.000Z"
+    assert jalali("2025-03-20T05:30:00.000Z") == "1403/12/30 09:00"
     assert jalali("2026-10-01T11:00:00.000Z") == "1405/07/09 14:30"
     assert jalali(1790621492000) is not None and jalali("garbage") is None
 

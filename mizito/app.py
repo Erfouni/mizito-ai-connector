@@ -212,7 +212,12 @@ def parse_when(value: str | None, *, default_time: tuple[int, int] = (9, 0)) -> 
         if y < 1700:  # a Jalali year
             if not (1 <= m <= 12 and 1 <= d <= (31 if m <= 6 else 30)):
                 raise ValueError
-            y, m, d = jalali_to_gregorian(y, m, d)
+            gregorian = jalali_to_gregorian(y, m, d)
+            # Esfand has 30 days only in a leap year: the arithmetic conversion moves a
+            # common year's 12/30 to the next year's 1/1, so round-trip the date (#7).
+            if (m, d) == (12, 30) and gregorian_to_jalali(*gregorian) != (y, 12, 30):
+                raise ValueError
+            y, m, d = gregorian
         hour, minute, second = (int(match[4]), int(match[5]), int(match[6] or 0)) if match[4] else (*default_time, 0)
         tz = TEHRAN
         if match[7] == "Z":
