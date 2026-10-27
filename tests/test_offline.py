@@ -94,12 +94,32 @@ def test_extract_text() -> None:
                                     '<c r="B2"><v>4</v></c></row></sheetData></worksheet>'})
     assert extract_text("b.xlsx", None, xlsx) == ("xlsx", "[فروش]\nکالا\tتعداد\nمیز\t4")
     reordered_xlsx = _zip({
-        "xl/workbook.xml": '<workbook><sheets><sheet name="Costs" r:id="rId2"/><sheet name="Sales" r:id="rId1"/></sheets></workbook>',
+        "xl/workbook.xml": '<workbook xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Costs" r:id="rId2"/><sheet name="Sales" r:id="rId1"/></sheets></workbook>',
         "xl/_rels/workbook.xml.rels": '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Target="worksheets/sheet2.xml"/></Relationships>',
         "xl/worksheets/sheet1.xml": '<worksheet><sheetData><row><c r="A1"><v>100</v></c></row></sheetData></worksheet>',
         "xl/worksheets/sheet2.xml": '<worksheet><sheetData><row><c r="A1"><v>40</v></c></row></sheetData></worksheet>',
     })
     assert extract_text("reordered.xlsx", None, reordered_xlsx) == ("xlsx", "[Costs]\n40\n\n[Sales]\n100")
+    for targets, sheet_order, expected in (
+        (("worksheets/sheet1.xml", "/xl/worksheets/sheet2.xml"),
+         '<sheet name="Sales" r:id="rId1"/><sheet name="Costs" r:id="rId2"/>', "[Sales]\n100\n\n[Costs]\n40"),
+        (("worksheets/sheet1.xml", "/xl/worksheets/sheet2.xml"),
+         '<sheet name="Costs" r:id="rId2"/><sheet name="Sales" r:id="rId1"/>', "[Costs]\n40\n\n[Sales]\n100"),
+        (("/xl/worksheets/sheet1.xml", "/xl/worksheets/sheet2.xml"),
+         '<sheet name="Costs" r:id="rId2"/><sheet name="Sales" r:id="rId1"/>', "[Costs]\n40\n\n[Sales]\n100"),
+        (("./worksheets/sheet1.xml", "worksheets/../worksheets/sheet2.xml"),
+         '<sheet name="Costs" r:id="rId2"/><sheet name="Sales" r:id="rId1"/>', "[Costs]\n40\n\n[Sales]\n100"),
+    ):
+        target_xlsx = _zip({
+            "xl/workbook.xml": '<workbook xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+                               f'<sheets>{sheet_order}</sheets></workbook>',
+            "xl/_rels/workbook.xml.rels": '<Relationships>'
+                                        f'<Relationship Id="rId1" Target="{targets[0]}"/>'
+                                        f'<Relationship Id="rId2" Target="{targets[1]}"/></Relationships>',
+            "xl/worksheets/sheet1.xml": '<worksheet><sheetData><row><c r="A1"><v>100</v></c></row></sheetData></worksheet>',
+            "xl/worksheets/sheet2.xml": '<worksheet><sheetData><row><c r="A1"><v>40</v></c></row></sheetData></worksheet>',
+        })
+        assert extract_text("targets.xlsx", None, target_xlsx) == ("xlsx", expected), (targets, sheet_order)
     pptx = _zip({"ppt/slides/slide2.xml": "<p:sld><a:p><a:r><a:t>دوم</a:t></a:r></a:p></p:sld>",
                  "ppt/slides/slide1.xml": "<p:sld><a:p><a:r><a:t>اول</a:t></a:r></a:p></p:sld>"})
     assert extract_text("c.pptx", None, pptx) == ("pptx", "[slide 1]\nاول\n\n\n[slide 2]\nدوم\n")

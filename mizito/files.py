@@ -136,7 +136,7 @@ def _xlsx(data: bytes) -> str:
         rel_path = "xl/_rels/workbook.xml.rels"
         if rel_path in names:
             rel_xml = z.read(rel_path).decode("utf-8", "replace")
-            relationships = {rid: posixpath.normpath(posixpath.join("xl", target.lstrip("/")))
+            relationships = {rid: posixpath.normpath(posixpath.join("/xl", target)).lstrip("/")
                              for rid, target in re.findall(
                                  r'<Relationship\b(?=[^>]*\bId="([^"]+)")(?=[^>]*\bTarget="([^"]+)")[^>]*/?>', rel_xml)}
         workbook_sheets = re.findall(
