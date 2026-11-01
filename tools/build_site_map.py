@@ -213,8 +213,11 @@ def esc(s: str) -> str:
 def clean_text(t: str) -> str:
     """Drop markup and attribute leftovers that the regex-based HTML split leaves in visible text."""
     t = re.sub(r"<[^>]*>", " ", str(t))
-    if '">' in t:
-        t = t.split('">')[-1]
+    t = re.sub(
+        r'^\s*(?:[\w:-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)\s*)+>\s*',
+        "",
+        t,
+    )
     return re.sub(r"\s+", " ", t).strip(" ,،")
 
 
