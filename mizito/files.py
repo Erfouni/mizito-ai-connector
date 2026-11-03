@@ -105,7 +105,8 @@ def _decode(data: bytes) -> str:
 
 def _xml_text(xml: str, paragraph: str) -> str:
     xml = re.sub(paragraph, "\n", xml)
-    xml = re.sub(r"<w:tab/>|<a:tab/>", "\t", xml)
+    xml = re.sub(r"<(?:w|a):br\b[^>]*/>|<(?P<br_prefix>w|a):br\b[^>]*>.*?</(?P=br_prefix):br\s*>", "\n", xml, flags=re.S)
+    xml = re.sub(r"<(?:w|a):tab\b[^>]*/>|<(?P<tab_prefix>w|a):tab\b[^>]*>.*?</(?P=tab_prefix):tab\s*>", "\t", xml, flags=re.S)
     return html.unescape(re.sub(r"<[^>]+>", "", xml))
 
 

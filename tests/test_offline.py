@@ -148,6 +148,21 @@ def test_extract_text() -> None:
     assert extract_text("h.bin", None, b"\x00\x01")[0] == "binary"
 
 
+def test_soft_line_breaks() -> None:
+    docx = _zip({"word/document.xml": '<w:document><w:body><w:p><w:r><w:t>first</w:t></w:r>'
+                                      '<w:r><w:br/></w:r><w:r><w:t>second</w:t></w:r>'
+                                      '<w:r><w:br w:type="text"><w:rPr/></w:br></w:r>'
+                                      '<w:r><w:t>third</w:t></w:r></w:p></w:body></w:document>'})
+    pptx = _zip({"ppt/slides/slide1.xml": '<p:sld><a:p><a:r><a:t>first</a:t></a:r>'
+                                           '<a:br/><a:br a:dirty="0"><a:rPr/></a:br>'
+                                           '<a:r><a:t>second</a:t></a:r></a:p></p:sld>'})
+    assert extract_text("breaks.docx", None, docx) == ("docx", "first\nsecond\nthird\n")
+    assert extract_text("breaks.pptx", None, pptx) == ("pptx", "[slide 1]\nfirst\n\nsecond\n")
+    from mizito.files import _xml_text
+    assert _xml_text('<w:br>keep</a:br>tail', r"</w:p>") == "keeptail"
+    assert _xml_text('<a:br>keep</w:br>tail', r"</a:p>") == "keeptail"
+
+
 def test_xlsx_self_closing_cells_and_rows() -> None:
     # Excel writes <c r="B2" s="1"/> for a styled empty cell and <row r="3" .../> for an empty row with a height.
     # Neither may swallow the element after it.
