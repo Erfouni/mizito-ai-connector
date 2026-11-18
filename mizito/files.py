@@ -159,6 +159,12 @@ def _xlsx(data: bytes) -> str:
             for row in _XLSX_ROW.findall(z.read(n).decode("utf-8", "replace")):
                 cells = []
                 for attrs, body in _XLSX_CELL.findall(row):
+                    reference = re.search(r'\br="([A-Z]{1,3})\d+"', attrs)
+                    if reference:
+                        column = 0
+                        for letter in reference.group(1):
+                            column = column * 26 + ord(letter) - ord("A") + 1
+                        cells.extend([""] * max(0, column - len(cells) - 1))
                     value = re.search(r"<v>(.*?)</v>", body, re.S)
                     inline = re.findall(r"<t[^>]*>(.*?)</t>", body, re.S)
                     if 't="s"' in attrs and value:
