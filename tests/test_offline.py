@@ -161,6 +161,8 @@ def test_soft_line_breaks() -> None:
     from mizito.files import _xml_text
     assert _xml_text('<w:br>keep</a:br>tail', r"</w:p>") == "keeptail"
     assert _xml_text('<a:br>keep</w:br>tail', r"</a:p>") == "keeptail"
+    assert _xml_text('<w:p><w:r><w:t>one</w:t></w:r><w:r><w:cr/></w:r><w:r><w:t>two</w:t></w:r></w:p>',
+                     r"</w:p>") == "one\ntwo\n"
 
 
 def test_xlsx_self_closing_cells_and_rows() -> None:
