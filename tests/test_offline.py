@@ -8,6 +8,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import httpx
+from unittest.mock import patch
 from dotenv import dotenv_values
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -19,8 +20,85 @@ from mizito.app import (  # noqa: E402
 )
 from mizito.files import extract_text  # noqa: E402
 from mizito_client import (  # noqa: E402
-    MizitoAuthError, MizitoClient, MizitoCodeRequired, hash_password, login_username, to_ascii_digits,
+    MizitoAuthError, MizitoClient, MizitoCodeRequired, MizitoError, hash_password, login_username, to_ascii_digits,
 )
+
+
+def test_unread_change_deltas() -> None:
+    from mizito.chat import unread_change
+
+    current = {"w1": {"c1": 4, "c2": 0}, "w2": {"c9": 2}}
+    assert unread_change(None, current) == [
+        {"workspace_id": "w1", "conversation_id": "c1", "increase": 0},
+        {"workspace_id": "w1", "conversation_id": "c2", "increase": 0},
+        {"workspace_id": "w2", "conversation_id": "c9", "increase": 0},
+    ]
+    assert unread_change({"w1": {"c1": 1}, "w2": {"c9": 3}}, current) == [
+        {"workspace_id": "w1", "conversation_id": "c1", "increase": 3},
+        {"workspace_id": "w1", "conversation_id": "c2", "increase": 0},
+        {"workspace_id": "w2", "conversation_id": "c9", "increase": 0},
+    ]
+
+
+def test_unread_tool_fake_http_boundary_isolated_and_named() -> None:
+    from mizito import app
+    from mizito.chat import mizito_unread_changes
+
+    tokens = {"t1": "w1", "t2": "w2"}
+    counts = {"w1": {"c1": 2}, "w2": {"c9": 4}}
+    switches: list[str] = []
+    failures = set()
+
+    def api(request: httpx.Request) -> httpx.Response:
+        endpoint = request.url.path.removeprefix("/api/").replace("/", ".")
+        wid = tokens[request.headers["x-token"]]
+        if endpoint == "workspace.userId":
+            return httpx.Response(200, json={"uid": "u", "wid": wid, "workspaces": [
+                {"_id": "w1", "title": "One"}, {"_id": "w2", "title": "Two"}]})
+        if endpoint == "workspace.switch":
+            target = json.loads(request.content)["workspace_id"]
+            switches.append(target)
+            return httpx.Response(200, json={"token": {"w1": "t1", "w2": "t2"}[target]})
+        if endpoint == "chat.getDialogs":
+            if wid in failures:
+                return httpx.Response(403, text="denied")
+            cid = next(iter(counts[wid]))
+            return httpx.Response(200, json={"dialogs": [{"_id": cid, "title": f"Chat {cid}",
+                "unread_count": counts[wid][cid]}]})
+        raise AssertionError(endpoint)
+
+    transport = httpx.MockTransport(api)
+    original_token, original_http = app.client.token, app.client._http
+    app.client.token, app.client._http = "t1", httpx.Client(transport=transport)
+    created = []
+    original_init = MizitoClient.__init__
+
+    def init(self, *args, **kwargs):
+        original_init(self, *args, **kwargs)
+        self._http = httpx.Client(transport=transport)
+        created.append(self)
+
+    try:
+        with patch.object(MizitoClient, "__init__", init):
+            first = mizito_unread_changes()
+            counts["w1"]["c1"], counts["w2"]["c9"] = 5, 1
+            second = mizito_unread_changes(first["state"])
+            assert app.client.token == "t1"
+            failures.add("w2")
+            try:
+                mizito_unread_changes(second["state"])
+                raise AssertionError("workspace failure was hidden")
+            except MizitoError:
+                pass
+            assert app.client.token == "t1"
+    finally:
+        app.client._http.close()
+        app.client._http, app.client.token = original_http, original_token
+        for instance in created:
+            instance._http.close()
+    assert first["conversations"][0]["title"] == "Chat c1"
+    assert [(r["conversation_id"], r["increase"]) for r in second["conversations"]] == [("c1", 3), ("c9", 0)]
+    assert switches == ["w2", "w2", "w2"]
 
 
 def test_calendar_round_trip() -> None:

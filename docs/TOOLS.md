@@ -38,10 +38,10 @@
 | 🟡 تست‌نشده | ساخته شده ولی عمداً تست نشد، چون روی افراد دیگر یا پروفایل اثر می‌گذاشت |
 
 
-**105 ابزار** در 16 بخش.
+**106 ابزار** در 16 بخش.
 
 
-> جمع: 71 تست‌شده، 21 ساخته‌شده ولی رد‌شده به‌خاطر پلن یا نقش حساب تست، 13 تست‌نشده.
+> جمع: 71 تست‌شده، 21 ساخته‌شده ولی رد‌شده به‌خاطر پلن یا نقش حساب تست، 14 تست‌نشده.
 
 
 ## حساب و میزکار
@@ -166,6 +166,7 @@ Set your custom status text and/or do-not-disturb (مزاحم نشوید) period
 | ابزار | عنوان | کار | نوع | وضعیت |
 |---|---|---|---|---|
 | [`mizito_list_conversations`](#mizito_list_conversations) | فهرست گفتگوها | فهرست گفتگوها (خصوصی، گروه، پروژه، مشتری) با تعداد خوانده‌نشده، به ترتیب آخرین فعالیت. | خواندنی | ✅ تست‌شده |
+| [`mizito_unread_changes`](#mizito_unread_changes) | تغییر پیام‌های خوانده‌نشده | گزارش شمارنده‌ی پیام‌های خوانده‌نشده در همه‌ی میزکارها و افزایش آن‌ها نسبت به snapshot قبلی، بدون علامت‌گذاری پیام‌ها؛ وضعیت میزکار سمت سرور تأیید نشده است. | خواندنی | 🟡 تست‌نشده |
 | [`mizito_get_messages`](#mizito_get_messages) | خواندن پیام‌های یک گفتگو | پیام‌های یک گفتگو (تا ۶۰۰ پیام در هر بار)، صفحه‌به‌صفحه یا از یک تاریخ و ساعت مشخص؛ همراه با فایل‌ها، وظیفه‌ها، نظرسنجی‌ها و صورتجلسه‌ها. | خواندنی | ✅ تست‌شده |
 | [`mizito_search_messages`](#mizito_search_messages) | جستجو در پیام‌ها | جستجوی متنی در همه‌ی پیام‌های میزکار یا پرونده‌های مشتری. | خواندنی | ✅ تست‌شده |
 | [`mizito_get_message_info`](#mizito_get_message_info) | جزئیات یک پیام (چه کسی دیده) | چه کسی و کِی یک پیام را دیده، و آیا هنوز قابل ویرایش یا حذف است. | خواندنی | ✅ تست‌شده |
@@ -192,6 +193,23 @@ Chat conversations (گفتگوها) of the workspace, newest activity first, wit
 | `unread_only` | boolean |  | Only conversations with unread messages. (پیش‌فرض: `False`) |
 | `kind` | `all` / `private` / `group` / `customer` |  | private = one-to-one chats, group = groups, channels and project conversations, customer = CRM customer files. (پیش‌فرض: `all`) |
 | `limit` | integer |  | Maximum rows to return (newest activity first). (پیش‌فرض: `100`) |
+
+### mizito_unread_changes
+
+**تغییر پیام‌های خوانده‌نشده** — گزارش شمارنده‌ی پیام‌های خوانده‌نشده در همه‌ی میزکارها و افزایش آن‌ها نسبت به snapshot قبلی، بدون علامت‌گذاری پیام‌ها؛ وضعیت میزکار سمت سرور تأیید نشده است.
+
+```text
+Snapshot unread counts in every accessible workspace without marking messages read. The connector's
+    token and active workspace are not changed locally; Mizito's server-side switch semantics are unverified.
+    Persist the returned state externally and pass it back on the next poll. An initial snapshot reports no
+    increases; newly appearing conversations count from zero thereafter. Increases are net count changes, not
+    a guarantee of newly received messages: reads between polls can mask arrivals. This tool returns counts,
+    not sender names or message content. A failed workspace aborts rather than returning incomplete state.
+```
+
+| پارامتر | نوع | لازم | توضیح |
+|---|---|---|---|
+| `previous` | object (اختیاری) |  | The state returned by the previous call, keyed by workspace id and conversation id. Omit on the first call to establish a baseline. |
 
 ### mizito_get_messages
 
