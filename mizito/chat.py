@@ -11,7 +11,7 @@ from mizito.app import (
     compact, dialog_row, html_text, iso, jalali, load_message, media_attachments, messages_count, parse_when,
     require_confirm, send_chat, simplify_message, tool,
 )
-from mizito_client import MizitoError
+from mizito_client import MizitoClient, MizitoError
 
 PAGE_SIZE = 15  # chat.getHistory always returns 15 messages per offset step
 
@@ -48,6 +48,61 @@ def mizito_list_conversations(
         }))
     out.sort(key=lambda x: x.get("last_message_date") or "", reverse=True)
     return {"total": len(out), "conversations": out[:limit]}
+
+
+def unread_change(previous: dict[str, dict[str, int]] | None, current: dict[str, dict[str, int]]) -> list[dict[str, int | str]]:
+    """Return positive unread deltas while preserving workspace/conversation identity."""
+    if previous is None:
+        return [{"workspace_id": wid, "conversation_id": cid, "increase": 0}
+                for wid, conversations in current.items() for cid in conversations]
+    return [{"workspace_id": wid, "conversation_id": cid,
+             "increase": max(0, count - previous.get(wid, {}).get(cid, 0))}
+            for wid, conversations in current.items() for cid, count in conversations.items()]
+
+
+@tool("تغییر پیام‌های خوانده‌نشده")
+def mizito_unread_changes(
+    previous: Annotated[dict[str, dict[str, int]] | None, Field(description=(
+        "The state returned by the previous call, keyed by workspace id and conversation id. "
+        "Omit on the first call to establish a baseline."))] = None,
+) -> dict:
+    """Snapshot unread counts in every accessible workspace without marking messages read or changing the
+    connector's active workspace. Persist the returned state externally and pass it back on the next poll.
+    An initial snapshot reports no increases; newly appearing conversations count from zero thereafter.
+    Increases are net count changes, not a guarantee of the number of newly received messages: reads between
+    polls can mask arrivals. A failed workspace aborts the snapshot rather than returning incomplete state."""
+    info = client.call("workspace.userId", {}) or {}
+    active = info.get("wid")
+    if not active or not client.token:
+        raise ToolError("Cannot determine the active workspace and token")
+    workspaces = {w["_id"]: w.get("title") for w in info.get("workspaces", []) if w.get("_id")}
+    workspaces.setdefault(active, None)
+    snapshot = MizitoClient(token=client.token, api_url=client.api_url)
+    try:
+        if (snapshot.call("workspace.userId", {}) or {}).get("wid") != active:
+            raise ToolError("Active workspace changed during snapshot; retry")
+        state = {}
+        rows = []
+        current_workspace = active
+        for wid, title in workspaces.items():
+            if wid != current_workspace:
+                snapshot.switch_workspace(wid)
+                current_workspace = wid
+            dialogs = (snapshot.call("chat.getDialogs", {}) or {}).get("dialogs", [])
+            counts = {}
+            for dialog in dialogs:
+                cid = dialog["_id"]
+                counts[cid] = dialog.get("unread_count") or 0
+                rows.append({"workspace_id": wid, "workspace_title": title, "conversation_id": cid,
+                             "title": dialog.get("title") or cid, "unread": counts[cid]})
+            state[wid] = counts
+        increases = {(x["workspace_id"], x["conversation_id"]): x["increase"]
+                     for x in unread_change(previous, state)}
+        for row in rows:
+            row["increase"] = increases[(row["workspace_id"], row["conversation_id"])]
+        return {"state": state, "conversations": rows}
+    finally:
+        snapshot._http.close()
 
 
 @tool("خواندن پیام‌های یک گفتگو")

@@ -23,6 +23,22 @@ from mizito_client import (  # noqa: E402
 )
 
 
+def test_unread_change_deltas() -> None:
+    from mizito.chat import unread_change
+
+    current = {"w1": {"c1": 4, "c2": 0}, "w2": {"c9": 2}}
+    assert unread_change(None, current) == [
+        {"workspace_id": "w1", "conversation_id": "c1", "increase": 0},
+        {"workspace_id": "w1", "conversation_id": "c2", "increase": 0},
+        {"workspace_id": "w2", "conversation_id": "c9", "increase": 0},
+    ]
+    assert unread_change({"w1": {"c1": 1}, "w2": {"c9": 3}}, current) == [
+        {"workspace_id": "w1", "conversation_id": "c1", "increase": 3},
+        {"workspace_id": "w1", "conversation_id": "c2", "increase": 0},
+        {"workspace_id": "w2", "conversation_id": "c9", "increase": 0},
+    ]
+
+
 def test_calendar_round_trip() -> None:
     day = date(1990, 1, 1)
     while day < date(2060, 1, 1):
